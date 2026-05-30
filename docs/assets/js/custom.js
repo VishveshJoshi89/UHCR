@@ -3,7 +3,15 @@
 // Professional, smooth, and performant interactions
 // ============================================================================
 
+// Prevent transitions on page load
+document.documentElement.classList.add('preload');
+
 document.addEventListener('DOMContentLoaded', function() {
+  // Remove preload class after a short delay
+  setTimeout(function() {
+    document.documentElement.classList.remove('preload');
+  }, 100);
+  
   // Initialize all features
   initThemeToggle();
   initDynamicYear();
