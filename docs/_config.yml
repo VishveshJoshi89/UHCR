@@ -1,31 +1,96 @@
 title: UHCR Documentation
-description: Universal Hardware-Aware Compute Runtime — Documentation
+description: Universal Hardware-Aware Compute Runtime — High-performance JIT compilation for Python
 
-remote_theme: just-the-docs/just-the-docs
+remote_theme: just-the-docs/just-the-docs@v0.8.2
 
 baseurl: /UHCR
 url: https://vishveshjoshi89.github.io
 
 markdown: kramdown
 highlighter: rouge
-color_scheme: light
 
+# Color scheme
+color_scheme: dark
+
+# Callouts
+callouts:
+  warning:
+    title: Warning
+    color: red
+  note:
+    title: Note
+    color: blue
+  tip:
+    title: Tip
+    color: green
+
+# Navigation
 nav_enabled: true
+nav_sort: case_insensitive
 
-# Enable search
+# Search
 search_enabled: true
-
 search:
   heading_level: 2
   previews: 3
   preview_words_before: 5
   preview_words_after: 10
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button: false
 
+# Heading anchors
+heading_anchors: true
+
+# Aux links
 aux_links:
-  "UHCR on GitHub":
+  "GitHub Repository":
     - "https://github.com/VishveshJoshi89/UHCR"
+  "PyPI Package":
+    - "https://pypi.org/project/uhcr/"
 
-footer_content: 'Licensed under <a href="https://github.com/VishveshJoshi89/UHCR">Apache-2.0 License</a>.'
+aux_links_new_tab: true
 
+# Footer
+footer_content: 'Copyright &copy; 2024 Vishvesh Joshi. Licensed under the <a href="https://github.com/VishveshJoshi89/UHCR/blob/main/LICENSE.txt">Apache-2.0 License</a>.'
+
+# Back to top link
+back_to_top: true
+back_to_top_text: "Back to top"
+
+# Collections for organizing content
+collections:
+  guides:
+    permalink: "/:collection/:path/"
+    output: true
+  reference:
+    permalink: "/:collection/:path/"
+    output: true
+
+just_the_docs:
+  collections:
+    guides:
+      name: Guides
+      nav_fold: false
+    reference:
+      name: Reference
+      nav_fold: false
+
+# Plugins
 plugins:
   - jekyll-remote-theme
+  - jekyll-seo-tag
+
+# Exclude from processing
+exclude:
+  - node_modules/
+  - vendor/
+  - Gemfile
+  - Gemfile.lock
+
+# Custom head includes
+head_custom_html: |
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="{{ '/assets/js/animations.js' | relative_url }}" defer></script>

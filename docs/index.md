@@ -5,11 +5,29 @@ nav_order: 0
 ---
 
 # UHCR
-[GitHub Repository](https://github.com/VishveshJoshi89/UHCR)
+{: .fs-9 }
 
-> Storage optimization subsystem (Redis cache, SQLite persistence, memory pooling, IO optimizer)
+Universal Hardware-Aware Compute Runtime — A Python framework for hardware-optimized computation with JIT compilation.
+{: .fs-6 .fw-300 }
 
-Universal Hardware-Aware Compute Runtime — a Python framework for hardware-optimized computation with JIT compilation across multiple ISAs. UHCR compiles a custom IR to native machine code at runtime, automatically selecting the optimal backend for your hardware.
+[Get Started](#quick-start){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
+[View on GitHub](https://github.com/VishveshJoshi89/UHCR){: .btn .fs-5 .mb-4 .mb-md-0 }
+
+---
+
+## What is UHCR?
+
+UHCR compiles a custom intermediate representation (IR) to native machine code at runtime, automatically selecting the optimal backend for your hardware. It features:
+
+- **JIT Compilation** — Traces Python functions and compiles to native machine code
+- **Hardware Detection** — Automatic CPUID, GPU probe, and NUMA topology discovery
+- **Multiple Backends** — CUDA, AVX2, AVX512, and generic CPU support
+- **Optimization Pipeline** — Constant folding, dead code elimination, strength reduction, CSE
+- **Storage Optimization** — High-performance memory pooling and hierarchical caching
+- **Plugin System** — Extend with custom backends, kernels, and passes
+- **Tensor API** — High-level tensor operations dispatched to the optimal backend
+
+---
 
 ## Quick Start
 
@@ -33,11 +51,12 @@ result = compute(10, 11)
 print(result)  # 42
 ```
 
+---
+
 ## Documentation
 
 ### Guides
 
-- [Getting Started](.) — Install UHCR and run your first program
 - [JIT Guide](jit-guide) — Using the `@uhcr.jit` decorator for compilation
 - [Plugin Guide](plugin-guide) — Writing and loading UHCR plugins
 - [Contributing](contributing) — How to contribute to the project
@@ -48,8 +67,10 @@ print(result)  # 42
 - [API Reference](api-reference) — Complete API documentation
 - [Hardware Detection](hardware-reference) — RAM, cache, and platform detection details
 - [Optimization Passes](optimization-passes) — IR optimization pipeline details
-- [Benchmarks](benchmarks) — Performance measurement and results
+- [Storage Subsystem](storage) — Caching, persistence, and memory management
 
 ---
 
-UHCR — Apache-2.0 License*
+## License
+
+UHCR is licensed under the [Apache-2.0 License](https://github.com/VishveshJoshi89/UHCR/blob/main/LICENSE.txt).

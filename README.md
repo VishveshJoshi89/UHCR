@@ -37,4 +37,4 @@ def compute(a, b):
 
 ## License
 
-[Apache-2.0](LICENSE.md)
+[Apache-2.0](LICENSE.txt)

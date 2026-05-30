@@ -1,8 +1,7 @@
 ---
 layout: default
 title: JIT Guide
-nav_order: 2
-parent: Guides
+nav_order: 1
 ---
 
 # @uhcr.jit — JIT Compilation Guide

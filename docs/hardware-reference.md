@@ -1,8 +1,7 @@
 ---
 layout: default
 title: Hardware Detection
-nav_order: 6
-parent: Reference
+nav_order: 8
 ---
 
 # Hardware Detection Reference

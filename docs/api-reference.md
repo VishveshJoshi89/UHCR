@@ -1,8 +1,7 @@
 ---
 layout: default
 title: API Reference
-nav_order: 2
-parent: Reference
+nav_order: 5
 ---
 
 # UHCR API Reference

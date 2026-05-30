@@ -1,8 +1,7 @@
 ---
 layout: default
 title: Plugin Guide
-nav_order: 3
-parent: Guides
+nav_order: 2
 ---
 
 # UHCR Plugin Guide

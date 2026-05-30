@@ -1,15 +1,14 @@
 ---
 layout: default
 title: Architecture
-nav_order: 1
-parent: Reference
+nav_order: 4
 ---
 
 # UHCR Architecture
 
 ## Overview
 
-UHCR v4.0.0 (Universal Hardware-Aware Compute Runtime) is a layered execution stack that compiles a custom intermediate representation (IR) to native machine code at runtime, selecting the optimal execution path based on detected hardware capabilities.
+UHCR is a layered execution stack that compiles a custom intermediate representation (IR) to native machine code at runtime, selecting the optimal execution path based on detected hardware capabilities.
 
 ## Layer Diagram
 
@@ -28,7 +27,6 @@ UHCR v4.0.0 (Universal Hardware-Aware Compute Runtime) is a layered execution st
 ├─────────────────────────────────────────────────────────┤
 │                 IR Optimization Pipeline                │
 │  Constant Fold → Strength Reduce → DCE → CSE          │
-│           uhcr/compiler/passes/                         │
 ├─────────────────────────────────────────────────────────┤
 │                   Compiler Pipeline                     │
 │        uhcr/compiler/ir.py, ir_builder.py              │
@@ -38,8 +36,6 @@ UHCR v4.0.0 (Universal Hardware-Aware Compute Runtime) is a layered execution st
 ├─────────────────────────────────────────────────────────┤
 │                  Code Generation                        │
 │  uhcr/compiler/x86_64/ — native x86-64 (AVX2)        │
-│  uhcr/compiler/aarch64/ — ARM64 (NEON 4S)            │
-│  uhcr/compiler/riscv/ — RV64GCV (RVV 1.0)           │
 ├─────────────────────────────────────────────────────────┤
 │                  Backend Selection                      │
 │              uhcr/backends/                             │
@@ -54,12 +50,6 @@ UHCR v4.0.0 (Universal Hardware-Aware Compute Runtime) is a layered execution st
 │  - memory_detect.py: RAM, NUMA, page size              │
 │  - platform_info.py: aggregated HardwareProfile        │
 ├─────────────────────────────────────────────────────────┤
-│                    Runtime                              │
-│              uhcr/runtime/                              │
-│  - UHCRRuntime: compilation orchestrator + IR hash cache│
-│  - AlignedBuffer: 64-byte aligned memory              │
-│  - Scheduler: parallel_for with thread pinning         │
-├─────────────────────────────────────────────────────────┤
 │                   Plugin System                         │
 │              uhcr/plugins/                              │
 │  - Plugin ABC: initialize(), shutdown()                │
@@ -71,40 +61,13 @@ UHCR v4.0.0 (Universal Hardware-Aware Compute Runtime) is a layered execution st
 
 ## Subsystem Details
 
-### 1. Storage & Caching Subsystem (`uhcr.storage`)
+### Storage & Caching Subsystem (`uhcr.storage`)
 The storage layer provides performance optimization and reliability via:
 - **`MemoryPool`** (`memory_pool.py`): Manages a pre-allocated pool of `AlignedBuffer` instances, minimizing overhead by avoiding frequent runtime kernel requests.
 - **`RedisCache`** (`redis_cache.py`): Houses a fast hot-tier memory storage key-value system for quick retrieval of JIT-compiled binary functions.
-- **`SQLiteStore`** (`sqlite_backend.py`): Serves as a persistent database for job execution metrics, histories, and server state.
+- **`SQLiteStore`** (`sqlite_store.py`): Serves as a persistent database for job execution metrics, histories, and server state.
 - **`IOOptimizer`** (`io_optimizer.py`): Combines memory-mapped I/O, LZ4 compression, and batched writes for lightning-fast disk/network transfers.
 - **`ChecksumValidator`** (`checksum.py`): SHA256-based integrity verification for cached kernels and data.
-
-### 2. Distributed Network Subsystem (`uhcr.network`)
-The network layer converts UHCR into a distributed execution infrastructure:
-- **`ProtocolServer`** (`protocol_server.py`): Coordinates both a high-throughput gRPC endpoint and an HTTP/REST server to accept connection handles.
-- **`RESTAPIServer`** (`rest_api.py`): HTTP endpoints for job submission, status queries, and metrics retrieval.
-- **`gRPCService`** (`grpc_service.py`): High-performance RPC for distributed compute with streaming support.
-- **`JobManager`** (`job_manager.py`): Handles task execution state (queued, running, completed, failed, or timed out).
-- **`CoordinatorNode`** (`coordinator.py`): Routes JIT jobs to appropriate workers based on architecture constraints.
-- **`WorkerNode`** (`worker.py`): Connects to the coordinator, registers hardware profiles, and runs isolated tasks.
-- **`HealthCheck`** (`health_check.py`): Liveness and readiness probes for distributed health monitoring.
-- **`MetricsCollector`** (`metrics_collector.py`): Aggregates performance telemetry across the cluster.
-
-### 3. ARM64 Enhanced SIMD (`uhcr.compiler.aarch64`)
-Added in v4.0.0, comprehensive ARM64 support includes:
-- **`NEON2DCodegen`** (`neon_2d.py`): Optimized matrix operations for ARM64 using NEON registers.
-- **`NEONIntCodegen`** (`neon_int.py`): Integer arithmetic with SIMD acceleration.
-- **`AppleSiliconBackend`** (`apple_silicon.py`): Native M1/M2/M3 optimization with `MAP_JIT` page allocation.
-- **`TargetProfiles`** (`target_profiles.py`): Hardware-specific tuning for ARM variants (Cortex-A72, A76, M1, etc.).
-- **`CrossCompiler`** (`cross_compile.py`): Build ARM64 code on x86_64 hosts with proper target configuration.
-
-### 4. CLI Extensions (`uhcr.cli`)
-New v4.0.0 commands for distributed management:
-- **`serve`**: Start a UHCR network server with gRPC and REST endpoints
-- **`submit`**: Submit jobs to a remote UHCR server
-- **`status`**: Query job status and execution history
-- **`monitor`**: Real-time performance monitoring dashboard
-- **`analytics`**: Aggregate performance analytics across jobs
 
 ## Compilation Flow
 
@@ -138,16 +101,15 @@ The generic backend includes a pure-Python IR interpreter. This guarantees every
 ```
 uhcr/__init__.py
   → uhcr.hardware.platform_info (detect)
-  → uhcr.runtime.runtime (get_runtime)
   → uhcr.api.tensor (tensor)
 
 uhcr.api.ops
   → uhcr.compiler.ir_builder (build IR)
-  → uhcr.runtime.runtime (compile)
 
-uhcr.runtime.runtime
-  → uhcr.hardware.platform_info (detect_platform)
-  → uhcr.backends.backend_selector (select_backend)
+uhcr.hardware.platform_info
+  → uhcr.hardware.cpuid
+  → uhcr.hardware.gpu_detect
+  → uhcr.hardware.memory_detect
 
 uhcr.backends.backend_selector
   → uhcr.backends.cpu_generic

@@ -1,8 +1,7 @@
 ---
 layout: default
 title: Storage Subsystem
-nav_order: 5
-parent: Reference
+nav_order: 7
 ---
 
 # Storage Subsystem
@@ -202,5 +201,4 @@ cache = RedisCache(
 ## See Also
 
 - [Architecture](architecture) — System design overview
-- [Network Subsystem](network) — Distributed coordination
-- [CLI Guide](cli-guide) — Command-line interface
+- [API Reference](api-reference) — Complete API documentation

@@ -1,8 +1,7 @@
 ---
 layout: default
 title: Optimization Passes
-nav_order: 3
-parent: Reference
+nav_order: 6
 ---
 
 # IR Optimization Passes
