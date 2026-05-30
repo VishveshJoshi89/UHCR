@@ -5,8 +5,7 @@ nav_order: 0
 ---
 
 # UHCR
-
-**v4.0.0** · [GitHub Repository](https://github.com/VishveshJoshi89/UHCR)
+[GitHub Repository](https://github.com/VishveshJoshi89/UHCR)
 
 > Storage optimization subsystem (Redis cache, SQLite persistence, memory pooling, IO optimizer)
 

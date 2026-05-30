@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Storage Subsystem
-nav_order: 5
+nav_order: 3
 parent: Reference
 ---
 

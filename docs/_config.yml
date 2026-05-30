@@ -1,5 +1,6 @@
 title: UHCR Documentation
 description: Universal Hardware-Aware Compute Runtime — Documentation
+
 remote_theme: just-the-docs/just-the-docs
 
 baseurl: /UHCR
@@ -19,7 +20,3 @@ footer_content: 'Licensed under <a href="https://github.com/VishveshJoshi89/UHCR
 
 plugins:
   - jekyll-remote-theme
-
-exclude:
-  - Gemfile
-  - Gemfile.lock
