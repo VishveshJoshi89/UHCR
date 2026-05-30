@@ -106,6 +106,7 @@ StyleCopReport.xml
 
 # Chutzpah Test files
 _Chutzpah*
+generate_scss.py
 
 # Visual C++ cache files
 ipch/

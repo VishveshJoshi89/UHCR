@@ -505,6 +505,7 @@ table {
 
 for filepath, content in files.items():
     with open(os.path.join(base_dir, filepath), 'w', encoding='utf-8') as f:
-        f.write(content.strip() + "\\n")
+        # Note: I removed the `strip() + "\\n"` which caused the problem earlier.
+        f.write(content.strip() + "\n")
 
 print("Generated SCSS architecture successfully.")
