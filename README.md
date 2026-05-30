@@ -4,7 +4,9 @@ A Python framework for hardware-optimized computation with JIT compilation acros
 
 <img src="https://img.shields.io/badge/python-3.10%2B-3776AB" alt="Python 3.10+">
 <img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="License: Apache-2.0">
-<img src="https://img.shields.io/badge/tests-passing-brightgreen" alt="Tests: passing">
+<img src="https://img.shields.io/badge/docs-Pages-purple" alt="Docs: GitHub Pages">
+
+[Full documentation](https://vishveshjoshi89.github.io/UHCR/)
 
 ## Install
 

@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uhcr"
+version = "1.0.1"
+description = "Universal Hardware-Aware Compute Runtime — a modular, capability-driven execution stack"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Vishvesh Joshi"}
+]
+keywords = ["compiler", "runtime", "hardware", "simd", "avx", "cuda", "jit", "tensor", "cli"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Compilers",
+    "Topic :: System :: Hardware",
+    "Operating System :: Microsoft :: Windows",
+    
+]
+
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "pytest-benchmark", "hypothesis>=6.0", "pyyaml>=6.0", "pytest-asyncio", "tomli"]
+network = ["grpcio>=1.60.0", "aiohttp>=3.9.0", "protobuf>=4.25.0"]
+
+[project.scripts]
+uhcr = "uhcr.cli:main"
+
+[project.urls]
+Homepage = "https://vishveshjoshi89.github.io/UHCR"
+Repository = "https://github.com/VishveshJoshi89/UHCR"
+Documentation = "https://vishveshjoshi89.github.io/UHCR"
+
+[tool.setuptools.packages.find]
+include = ["uhcr*"]
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::DeprecationWarning"]
