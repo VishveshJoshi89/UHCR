@@ -1,0 +1,36 @@
+// Main Content Layout
+.main {
+  margin-left: var(--sidebar-width) !important;
+  background: var(--bg-primary) !important;
+  min-height: 100vh !important;
+}
+#main-content-wrap {
+  background: var(--bg-primary) !important;
+  padding: 0 !important;
+}
+.main-content {
+  padding: 2.5rem 3rem !important;
+  max-width: 900px !important;
+  margin: 0 auto !important;
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem !important;
+  }
+}
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0 !important;
+  }
+}
+.site-footer {
+  background: var(--bg-secondary) !important;
+  border-top: 1px solid var(--border-color) !important;
+  padding: 2rem !important;
+  text-align: center !important;
+  color: var(--text-muted) !important;
+  font-size: 0.875rem !important;
+  margin-top: 4rem !important;
+  a {
+    color: var(--color-primary) !important;
+    &:hover { text-decoration: underline !important; }
+  }
+}\n

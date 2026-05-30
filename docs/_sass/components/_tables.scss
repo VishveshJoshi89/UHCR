@@ -1,0 +1,32 @@
+// Tables
+table {
+  width: 100%;
+  margin: 1.5em 0;
+  border-collapse: collapse;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  font-size: 0.95em;
+  thead {
+    background: var(--color-primary);
+    th {
+      padding: 0.875em 1em;
+      text-align: left;
+      font-weight: 600;
+      color: white;
+    }
+  }
+  tbody {
+    background: var(--bg-secondary);
+    tr {
+      border-bottom: 1px solid var(--border-color);
+      transition: background var(--transition);
+      &:hover { background: var(--bg-tertiary); }
+      &:last-child { border-bottom: none; }
+    }
+    td {
+      padding: 0.875em 1em;
+      color: var(--text-primary);
+    }
+  }
+}\n

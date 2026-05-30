@@ -1,0 +1,30 @@
+// Links & Anchors
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  &:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+  }
+}
+.anchor-heading {
+  display: none !important;
+}
+h1, h2, h3, h4, h5, h6 {
+  position: relative;
+  &:hover::before {
+    content: '🔗';
+    position: absolute;
+    left: -1.5em;
+    font-size: 0.8em;
+    opacity: 0.5;
+    cursor: pointer;
+    transition: opacity var(--transition);
+  }
+  &:hover::before:hover {
+    opacity: 1;
+  }
+}\n
