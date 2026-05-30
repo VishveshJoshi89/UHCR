@@ -27,7 +27,7 @@ def compute(a, b):
 ## Features
 
 - **JIT Compilation** - Traces Python functions and compiles to native machine code
-- - **CUDA Backend** - GPU acceleration via PTX JIT for NVIDIA hardware
+- **CUDA Backend** - GPU acceleration via PTX JIT for NVIDIA hardware
 - **Optimization Pipeline** - Constant folding, dead code elimination, strength reduction, CSE
 - **Hardware Detection** - Automatic CPUID, GPU probe, and NUMA topology discovery
 - **Storage Optimization** - High-performance memory pooling and hierarchical caching
