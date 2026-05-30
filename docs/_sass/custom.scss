@@ -1,12 +1,12 @@
 // ============================================================================
 // UHCR Documentation - Professional & Accessible Design
+// Mobile-first responsive approach
 // ============================================================================
 
 // ============================================================================
 // THEME VARIABLES - Light and Dark modes
 // ============================================================================
 
-// Light theme (default)
 :root {
   // Primary colors - clean blue
   --color-primary: #2563eb;
@@ -17,7 +17,6 @@
   --color-success: #059669;
   --color-warning: #d97706;
   --color-danger: #dc2626;
-  --color-info: #0284c7;
   
   // Light theme backgrounds
   --bg-primary: #ffffff;
@@ -31,12 +30,8 @@
   // Code colors (light mode)
   --code-bg: #f3f4f6;
   --code-text: #111827;
-  --code-keyword: #d946ef;
-  --code-string: #16a34a;
-  --code-number: #ea580c;
   
   // Sidebar
-  --sidebar-bg: #f9fafb;
   --sidebar-width: 280px;
   
   // Shadows
@@ -57,183 +52,23 @@
   --text-secondary: #e5e7eb;
   --text-muted: #9ca3af;
   --border-color: #374151;
-  --sidebar-bg: #1f2937;
-  
-  // Code colors (dark mode)
   --code-bg: #1f2937;
   --code-text: #f9fafb;
-  --code-keyword: #f472b6;
-  --code-string: #86efac;
-  --code-number: #fb923c;
-  
   --color-primary: #3b82f6;
   --color-primary-dark: #2563eb;
-  --color-primary-light: #60a5fa;
 }
 
 // ============================================================================
-// SIDEBAR FIXES - Remove double scrolling, improve UX
+// BASE STYLES - Mobile first
 // ============================================================================
 
-// Fix sidebar height and scrolling
-.side-bar {
-  width: var(--sidebar-width) !important;
-  background: var(--sidebar-bg) !important;
-  border-right: 1px solid var(--border-color) !important;
-  height: 100vh !important;
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  padding: 0 !important;
-  
-  // Remove double scrollbar
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 4px;
-    
-    &:hover {
-      background: var(--text-muted);
-    }
-  }
+* {
+  box-sizing: border-box;
 }
 
-// Fix site header in sidebar
-.site-header {
-  background: var(--sidebar-bg) !important;
-  border-bottom: 1px solid var(--border-color) !important;
-  padding: 1.5rem 1rem !important;
-  margin: 0 !important;
-  min-height: auto !important;
+html {
+  scroll-behavior: smooth;
 }
-
-.site-title {
-  color: var(--color-primary) !important;
-  font-weight: 700 !important;
-  font-size: 1.25rem !important;
-  
-  &:hover {
-    color: var(--color-primary-dark) !important;
-  }
-}
-
-// Fix navigation spacing
-.site-nav {
-  padding: 1rem 0 !important;
-  background: transparent !important;
-}
-
-// Improve navigation items
-.nav-list {
-  padding: 0 !important;
-  
-  .nav-list-item {
-    margin: 0 !important;
-    
-    .nav-list-link {
-      padding: 0.5rem 1rem !important;
-      color: var(--text-secondary) !important;
-      font-size: 0.9375rem !important;
-      border-left: 3px solid transparent !important;
-      transition: all var(--transition) !important;
-      
-      &:hover {
-        background: var(--bg-tertiary) !important;
-        color: var(--text-primary) !important;
-      }
-      
-      &.active {
-        background: var(--bg-tertiary) !important;
-        color: var(--color-primary) !important;
-        border-left-color: var(--color-primary) !important;
-        font-weight: 600 !important;
-      }
-    }
-  }
-}
-
-// Fix main content positioning
-.main {
-  margin-left: var(--sidebar-width) !important;
-  background: var(--bg-primary) !important;
-  min-height: 100vh !important;
-}
-
-#main-content-wrap {
-  background: var(--bg-primary) !important;
-  padding: 0 !important;
-}
-
-// ============================================================================
-// HEADER FIXES - Reduce wasted space, align search
-// ============================================================================
-
-.main-header {
-  background: var(--bg-primary) !important;
-  border-bottom: 1px solid var(--border-color) !important;
-  padding: 1rem 2rem !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 1rem !important;
-  min-height: auto !important;
-}
-
-// Fix search alignment
-.search {
-  flex: 1 !important;
-  max-width: 500px !important;
-  
-  .search-input {
-    width: 100% !important;
-    padding: 0.5rem 1rem !important;
-    background: var(--bg-secondary) !important;
-    border: 1px solid var(--border-color) !important;
-    border-radius: 0.5rem !important;
-    color: var(--text-primary) !important;
-    font-size: 0.9375rem !important;
-    
-    &:focus {
-      outline: none !important;
-      border-color: var(--color-primary) !important;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
-    }
-  }
-}
-
-// Fix aux links
-.aux-nav {
-  display: flex !important;
-  gap: 0.5rem !important;
-  
-  .site-button {
-    background: var(--color-primary) !important;
-    color: white !important;
-    border-radius: 9999px !important;
-    padding: 0.625rem 1.5rem !important;
-    font-size: 0.875rem !important;
-    font-weight: 500 !important;
-    transition: all var(--transition) !important;
-    
-    &:hover {
-      background: var(--color-primary-dark) !important;
-      transform: translateY(-2px) !important;
-    }
-  }
-}
-
-
-// ============================================================================
-// TYPOGRAPHY - Professional documentation style
-// ============================================================================
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
@@ -246,63 +81,58 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-// Headings - clear hierarchy
+// ============================================================================
+// TYPOGRAPHY - Mobile first
+// ============================================================================
+
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   line-height: 1.3;
-  margin-top: 2em;
+  margin-top: 1.5em;
   margin-bottom: 0.75em;
   color: var(--text-primary);
   letter-spacing: -0.01em;
-  
-  &:first-child {
-    margin-top: 0;
-  }
 }
 
 h1 {
-  font-size: 2.25rem;
+  font-size: 1.875rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
   margin-bottom: 1em;
 }
 
 h2 {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 0.5em;
-  margin-top: 2.5em;
+  margin-top: 2em;
 }
 
 h3 {
-  font-size: 1.375rem;
-  margin-top: 2em;
+  font-size: 1.25rem;
+  margin-top: 1.5em;
 }
 
 h4 {
   font-size: 1.125rem;
 }
 
-// Paragraphs
 p {
   margin-bottom: 1.25em;
   line-height: 1.7;
   color: var(--text-secondary);
 }
 
-// Lists
 ul, ol {
   margin: 1.25em 0;
   padding-left: 1.75em;
-  
-  li {
-    margin-bottom: 0.625em;
-    line-height: 1.7;
-    color: var(--text-secondary);
-  }
 }
 
-// Strong text
+li {
+  margin-bottom: 0.625em;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
 strong {
   font-weight: 600;
   color: var(--text-primary);
@@ -321,34 +151,27 @@ a {
     color: var(--color-primary-dark);
     text-decoration: underline;
   }
-  
-  &:visited {
-    color: var(--color-primary-dark);
-  }
 }
 
 // ============================================================================
-// CODE BLOCKS - Readable and beautiful with proper light mode colors
+// CODE BLOCKS
 // ============================================================================
 
 code {
-  font-family: 'Fira Code', 'SF Mono', Monaco, 'Cascadia Code', 'Courier New', monospace;
+  font-family: 'Fira Code', 'SF Mono', Monaco, 'Cascadia Code', monospace;
   font-size: 0.875em;
   font-variant-ligatures: none;
 }
 
-// Inline code
 :not(pre) > code {
   background: var(--code-bg);
   color: var(--color-primary);
   padding: 0.2em 0.4em;
   border-radius: 0.375rem;
   border: 1px solid var(--border-color);
-  font-size: 0.875em;
   font-weight: 500;
 }
 
-// Code blocks - CRITICAL FIX for light mode visibility
 .highlight,
 pre {
   background: var(--code-bg) !important;
@@ -358,33 +181,17 @@ pre {
   overflow-x: auto !important;
   box-shadow: var(--shadow-sm) !important;
   position: relative !important;
-  
-  pre {
-    margin: 0 !important;
-    padding: 1.25rem !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
+  padding: 1.25rem !important;
   
   code {
     font-size: 0.875em !important;
     line-height: 1.7 !important;
     color: var(--code-text) !important;
   }
-  
-  // Syntax highlighting colors for light mode
-  .k, .kn, .kp, .kr, .kt { color: var(--code-keyword) !important; }
-  .s, .sa, .sb, .sc, .sd, .s1, .s2 { color: var(--code-string) !important; }
-  .mf, .mh, .mi, .mo, .m, .mb, .mx { color: var(--code-number) !important; }
-  .n, .na, .nb, .nc, .no, .nd, .ni, .nl, .nn, .nx { color: var(--code-text) !important; }
-  .o, .ow { color: var(--text-secondary) !important; }
-  .p { color: var(--text-secondary) !important; }
-  .c, .c1, .cm { color: #6b7280 !important; font-style: italic; }
 }
 
 // ============================================================================
-// TABLES - Clean and professional
+// TABLES
 // ============================================================================
 
 table {
@@ -395,39 +202,39 @@ table {
   overflow: hidden;
   box-shadow: var(--shadow-md);
   font-size: 0.95em;
-  
-  thead {
-    background: var(--color-primary);
-    
-    th {
-      padding: 0.875em 1em;
-      text-align: left;
-      font-weight: 600;
-      color: white;
-    }
-  }
-  
-  tbody {
-    background: var(--bg-secondary);
-    
-    tr {
-      border-bottom: 1px solid var(--border-color);
-      transition: background var(--transition);
-      
-      &:hover {
-        background: var(--bg-tertiary);
-      }
-      
-      &:last-child {
-        border-bottom: none;
-      }
-    }
-    
-    td {
-      padding: 0.875em 1em;
-      color: var(--text-primary);
-    }
-  }
+}
+
+thead {
+  background: var(--color-primary);
+}
+
+th {
+  padding: 0.875em 1em;
+  text-align: left;
+  font-weight: 600;
+  color: white;
+}
+
+tbody {
+  background: var(--bg-secondary);
+}
+
+tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: background var(--transition);
+}
+
+tr:hover {
+  background: var(--bg-tertiary);
+}
+
+tr:last-child {
+  border-bottom: none;
+}
+
+td {
+  padding: 0.875em 1em;
+  color: var(--text-primary);
 }
 
 // ============================================================================
@@ -443,14 +250,14 @@ blockquote {
   color: var(--text-secondary);
   font-style: italic;
   box-shadow: var(--shadow-sm);
-  
-  p {
-    margin: 0;
-  }
+}
+
+blockquote p {
+  margin: 0;
 }
 
 // ============================================================================
-// BUTTONS - Oval shape with better styling
+// BUTTONS - Oval shape
 // ============================================================================
 
 .btn,
@@ -470,107 +277,201 @@ blockquote {
   box-shadow: var(--shadow-sm) !important;
   background: var(--color-primary) !important;
   color: white !important;
-  
-  &:hover {
-    background: var(--color-primary-dark) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: var(--shadow-md) !important;
-    text-decoration: none !important;
-  }
-  
-  &:active {
-    transform: translateY(0) !important;
-  }
 }
 
-// Aux nav buttons
-.aux-nav-list-item {
-  .site-button {
-    background: var(--color-primary) !important;
-    color: white !important;
-    border-radius: 9999px !important;
-    padding: 0.625rem 1.5rem !important;
-    
-    &:hover {
-      background: var(--color-primary-dark) !important;
-      transform: translateY(-2px) !important;
-    }
-  }
+.btn:hover,
+.btn-primary:hover,
+.site-button:hover {
+  background: var(--color-primary-dark) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-md) !important;
+  text-decoration: none !important;
+}
+
+.btn:active,
+.btn-primary:active,
+.site-button:active {
+  transform: translateY(0) !important;
 }
 
 // ============================================================================
-// NAVIGATION
+// SIDEBAR - Mobile hidden, desktop visible
 // ============================================================================
+
+.side-bar {
+  width: 100% !important;
+  background: var(--bg-secondary) !important;
+  border-right: none !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  height: auto !important;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  overflow: visible !important;
+  padding: 1rem !important;
+}
+
+.site-header {
+  background: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  padding: 1rem !important;
+  margin: 0 !important;
+  min-height: auto !important;
+}
+
+.site-title {
+  color: var(--color-primary) !important;
+  font-weight: 700 !important;
+  font-size: 1.125rem !important;
+}
 
 .site-nav {
+  padding: 0.5rem 0 !important;
   background: transparent !important;
 }
 
+.nav-list {
+  padding: 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.5rem !important;
+}
+
+.nav-list-item {
+  margin: 0 !important;
+}
+
 .nav-list-link {
-  transition: all var(--transition);
-  
-  &:hover {
-    background: var(--bg-tertiary);
-  }
-  
-  &.active {
-    background: var(--bg-tertiary);
-    color: var(--color-primary);
-    border-left: 3px solid var(--color-primary);
-  }
+  padding: 0.5rem 1rem !important;
+  color: var(--text-secondary) !important;
+  font-size: 0.875rem !important;
+  border-left: none !important;
+  border-bottom: 2px solid transparent !important;
+  transition: all var(--transition) !important;
+  display: inline-block !important;
+}
+
+.nav-list-link:hover {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+.nav-list-link.active {
+  background: var(--bg-tertiary) !important;
+  color: var(--color-primary) !important;
+  border-bottom-color: var(--color-primary) !important;
+  font-weight: 600 !important;
 }
 
 // ============================================================================
-// MAIN CONTENT - Comfortable reading width
+// MAIN CONTENT - Mobile first
 // ============================================================================
+
+.main {
+  margin-left: 0 !important;
+  background: var(--bg-primary) !important;
+  min-height: 100vh !important;
+}
+
+#main-content-wrap {
+  background: var(--bg-primary) !important;
+  padding: 0 !important;
+}
+
+.main-header {
+  background: var(--bg-primary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  padding: 1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  flex-wrap: wrap !important;
+  min-height: auto !important;
+}
+
+.search {
+  flex: 1 !important;
+  min-width: 200px !important;
+  max-width: 100% !important;
+}
+
+.search-input {
+  width: 100% !important;
+  padding: 0.5rem 1rem !important;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 0.5rem !important;
+  color: var(--text-primary) !important;
+  font-size: 0.9375rem !important;
+}
+
+.search-input:focus {
+  outline: none !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+}
+
+.aux-nav {
+  display: flex !important;
+  gap: 0.5rem !important;
+  flex-wrap: wrap !important;
+}
+
+.aux-nav-list-item {
+  margin: 0 !important;
+}
+
+.aux-nav-list-item .site-button {
+  background: var(--color-primary) !important;
+  color: white !important;
+  border-radius: 9999px !important;
+  padding: 0.625rem 1.5rem !important;
+  font-size: 0.875rem !important;
+}
 
 .main-content {
-  padding: 2.5rem 3rem !important;
-  max-width: 900px !important;
-  margin: 0 auto !important;
-  
-  @media (max-width: 768px) {
-    padding: 1.5rem 1rem !important;
-  }
+  padding: 1.5rem 1rem !important;
+  max-width: 100% !important;
+  margin: 0 !important;
 }
 
 // ============================================================================
-// FOOTER - Compact and clean
+// FOOTER
 // ============================================================================
 
 .site-footer {
   background: var(--bg-secondary) !important;
   border-top: 1px solid var(--border-color) !important;
-  padding: 2rem !important;
+  padding: 2rem 1rem !important;
   text-align: center !important;
   color: var(--text-muted) !important;
   font-size: 0.875rem !important;
   margin-top: 4rem !important;
-  
-  a {
-    color: var(--color-primary) !important;
-    
-    &:hover {
-      text-decoration: underline !important;
-    }
-  }
+}
+
+.site-footer a {
+  color: var(--color-primary) !important;
+}
+
+.site-footer a:hover {
+  text-decoration: underline !important;
 }
 
 // ============================================================================
-// THEME TOGGLE BUTTON
+// THEME TOGGLE
 // ============================================================================
 
 .theme-toggle {
   position: fixed !important;
-  bottom: 2rem !important;
-  right: 2rem !important;
-  width: 3rem !important;
-  height: 3rem !important;
+  bottom: 1rem !important;
+  right: 1rem !important;
+  width: 2.75rem !important;
+  height: 2.75rem !important;
   border-radius: 50% !important;
   background: var(--color-primary) !important;
   border: none !important;
   color: white !important;
-  font-size: 1.25rem !important;
+  font-size: 1.1rem !important;
   cursor: pointer !important;
   box-shadow: var(--shadow-lg) !important;
   transition: all var(--transition) !important;
@@ -578,18 +479,18 @@ blockquote {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  
-  &:hover {
-    transform: scale(1.1) !important;
-  }
-  
-  &:active {
-    transform: scale(0.95) !important;
-  }
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1) !important;
+}
+
+.theme-toggle:active {
+  transform: scale(0.95) !important;
 }
 
 // ============================================================================
-// SCROLL PROGRESS BAR
+// SCROLL PROGRESS
 // ============================================================================
 
 .scroll-progress {
@@ -625,52 +526,74 @@ blockquote {
   transition: all var(--transition) !important;
   z-index: 10 !important;
   box-shadow: var(--shadow-sm) !important;
-  
-  &:hover {
-    background: var(--color-primary-dark) !important;
-    transform: translateY(-1px) !important;
-    box-shadow: var(--shadow-md) !important;
-  }
-  
-  &.copied {
-    background: var(--color-success) !important;
-  }
+}
+
+.copy-button:hover {
+  background: var(--color-primary-dark) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.copy-button.copied {
+  background: var(--color-success) !important;
 }
 
 // ============================================================================
-// RESPONSIVE DESIGN
+// UTILITIES
 // ============================================================================
 
-@media (max-width: 768px) {
-  .side-bar {
-    width: 100% !important;
-    position: relative !important;
-    height: auto !important;
-  }
-  
-  .main {
-    margin-left: 0 !important;
-  }
-  
-  h1 {
-    font-size: 1.875rem;
-  }
-  
-  h2 {
-    font-size: 1.5rem;
-  }
-  
-  .main-content {
-    padding: 1.5rem 1rem !important;
-  }
-  
-  .theme-toggle {
-    bottom: 1rem !important;
-    right: 1rem !important;
-    width: 2.75rem !important;
-    height: 2.75rem !important;
-    font-size: 1.1rem !important;
-  }
+::selection {
+  background: var(--color-primary);
+  color: white;
+}
+
+::-moz-selection {
+  background: var(--color-primary);
+  color: white;
+}
+
+.anchor-heading {
+  display: none !important;
+}
+
+.external-link::after {
+  content: ' ↗';
+  font-size: 0.75em;
+  opacity: 0.6;
+}
+
+.breadcrumb-nav {
+  padding: 1rem 0 !important;
+  color: var(--text-muted) !important;
+  font-size: 0.875rem !important;
+}
+
+.breadcrumb-nav a {
+  color: var(--color-primary) !important;
+}
+
+.breadcrumb-nav a:hover {
+  text-decoration: underline !important;
+}
+
+.label {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border-radius: 0.375rem !important;
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  margin: 1.5em 0;
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-md);
+}
+
+.table-wrapper table {
+  margin: 0;
 }
 
 // ============================================================================
@@ -678,9 +601,7 @@ blockquote {
 // ============================================================================
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  * {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -694,65 +615,107 @@ blockquote {
 }
 
 // ============================================================================
-// UTILITY CLASSES
+// TABLET - 768px and up
 // ============================================================================
 
-// Selection color
-::selection {
-  background: var(--color-primary);
-  color: white;
-}
-
-::-moz-selection {
-  background: var(--color-primary);
-  color: white;
-}
-
-// Anchor heading icons
-.anchor-heading {
-  display: none !important;
-}
-
-// External link icon
-.external-link::after {
-  content: ' ↗';
-  font-size: 0.75em;
-  opacity: 0.6;
-}
-
-// Breadcrumb styling
-.breadcrumb-nav {
-  padding: 1rem 0 !important;
-  color: var(--text-muted) !important;
-  font-size: 0.875rem !important;
+@media (min-width: 768px) {
+  h1 {
+    font-size: 2.25rem;
+  }
   
-  a {
-    color: var(--color-primary) !important;
-    
-    &:hover {
-      text-decoration: underline !important;
-    }
+  h2 {
+    font-size: 1.75rem;
+  }
+  
+  h3 {
+    font-size: 1.375rem;
+  }
+  
+  .side-bar {
+    width: var(--sidebar-width) !important;
+    background: var(--bg-secondary) !important;
+    border-right: 1px solid var(--border-color) !important;
+    border-bottom: none !important;
+    height: 100vh !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 0 !important;
+  }
+  
+  .site-header {
+    padding: 1.5rem 1rem !important;
+  }
+  
+  .site-title {
+    font-size: 1.25rem !important;
+  }
+  
+  .site-nav {
+    padding: 1rem 0 !important;
+  }
+  
+  .nav-list {
+    display: block !important;
+    padding: 0 !important;
+  }
+  
+  .nav-list-item {
+    margin: 0 !important;
+  }
+  
+  .nav-list-link {
+    display: block !important;
+    padding: 0.5rem 1rem !important;
+    border-left: 3px solid transparent !important;
+    border-bottom: none !important;
+  }
+  
+  .nav-list-link.active {
+    border-left-color: var(--color-primary) !important;
+    border-bottom-color: transparent !important;
+  }
+  
+  .main {
+    margin-left: var(--sidebar-width) !important;
+  }
+  
+  .main-header {
+    padding: 1rem 2rem !important;
+    gap: 1rem !important;
+  }
+  
+  .search {
+    max-width: 500px !important;
+  }
+  
+  .main-content {
+    padding: 2.5rem 3rem !important;
+    max-width: 900px !important;
+    margin: 0 auto !important;
+  }
+  
+  .theme-toggle {
+    bottom: 2rem !important;
+    right: 2rem !important;
+    width: 3rem !important;
+    height: 3rem !important;
+    font-size: 1.25rem !important;
+  }
+  
+  .site-footer {
+    padding: 2rem !important;
   }
 }
 
-// Label styling
-.label {
-  background: var(--bg-tertiary) !important;
-  color: var(--text-primary) !important;
-  border-radius: 0.375rem !important;
-  padding: 0.25rem 0.5rem !important;
-  font-size: 0.8125rem !important;
-  font-weight: 500 !important;
-}
+// ============================================================================
+// LARGE SCREENS - 1024px and up
+// ============================================================================
 
-// Table wrapper for mobile
-.table-wrapper {
-  overflow-x: auto;
-  margin: 1.5em 0;
-  border-radius: 0.5rem;
-  box-shadow: var(--shadow-md);
-  
-  table {
-    margin: 0;
+@media (min-width: 1024px) {
+  .main-content {
+    max-width: 900px !important;
   }
 }
