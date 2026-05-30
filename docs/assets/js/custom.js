@@ -29,8 +29,16 @@ document.addEventListener('DOMContentLoaded', function() {
 // THEME TOGGLE - Light/Dark mode with localStorage
 // ============================================================================
 function initThemeToggle() {
-  const toggle = document.getElementById('theme-toggle');
-  if (!toggle) return;
+  let toggle = document.getElementById('theme-toggle');
+  if (!toggle) {
+    toggle = document.createElement('button');
+    toggle.id = 'theme-toggle';
+    toggle.className = 'theme-toggle';
+    toggle.setAttribute('aria-label', 'Toggle dark mode');
+    toggle.setAttribute('title', 'Toggle dark mode');
+    toggle.textContent = '🌙';
+    document.body.appendChild(toggle);
+  }
   
   // Get saved theme or system preference
   const savedTheme = localStorage.getItem('theme');

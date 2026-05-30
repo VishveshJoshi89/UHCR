@@ -8,12 +8,13 @@ table {
   box-shadow: var(--shadow-md);
   font-size: 0.95em;
   thead {
-    background: var(--color-primary);
+    background: var(--bg-tertiary);
+    border-bottom: 2px solid var(--border-color);
     th {
       padding: 0.875em 1em;
       text-align: left;
       font-weight: 600;
-      color: white;
+      color: var(--text-primary);
     }
   }
   tbody {

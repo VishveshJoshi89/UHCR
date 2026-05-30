@@ -11,20 +11,33 @@ a {
   }
 }
 .anchor-heading {
-  display: none !important;
-}
-h1, h2, h3, h4, h5, h6 {
-  position: relative;
-  &:hover::before {
-    content: '🔗';
-    position: absolute;
-    left: -1.5em;
-    font-size: 0.8em;
-    opacity: 0.5;
-    cursor: pointer;
-    transition: opacity var(--transition);
+  position: absolute !important;
+  left: -1.5rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  opacity: 0 !important;
+  transition: opacity var(--transition) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  &:focus, &:hover {
+    opacity: 1 !important;
   }
-  &:hover::before:hover {
-    opacity: 1;
+  svg {
+    width: 1rem !important;
+    height: 1rem !important;
+    fill: currentColor !important;
+    color: var(--text-muted) !important;
+    &:hover {
+      color: var(--color-primary) !important;
+    }
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  position: relative !important;
+  &:hover .anchor-heading {
+    opacity: 0.6 !important;
   }
 }
