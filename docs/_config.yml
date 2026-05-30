@@ -88,9 +88,13 @@ exclude:
   - Gemfile
   - Gemfile.lock
 
-# Custom head includes
-head_custom_html: |
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
-  <script src="{{ '/assets/js/animations.js' | relative_url }}" defer></script>
+# SCSS compilation
+sass:
+  style: compressed
+  
+# Load custom CSS after theme
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+
+# Custom CSS will be loaded via assets/css/just-the-docs-default.scss
