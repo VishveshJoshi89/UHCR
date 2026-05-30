@@ -205,27 +205,27 @@ table {
 }
 
 thead {
-  background: var(--color-primary);
+  background: var(--color-primary) !important;
 }
 
 th {
-  padding: 0.875em 1em;
-  text-align: left;
-  font-weight: 600;
-  color: white;
+  padding: 0.875em 1em !important;
+  text-align: left !important;
+  font-weight: 600 !important;
+  color: white !important;
 }
 
 tbody {
-  background: var(--bg-secondary);
+  background: var(--bg-secondary) !important;
 }
 
 tr {
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color) !important;
   transition: background var(--transition);
 }
 
 tr:hover {
-  background: var(--bg-tertiary);
+  background: var(--bg-tertiary) !important;
 }
 
 tr:last-child {
@@ -233,8 +233,15 @@ tr:last-child {
 }
 
 td {
-  padding: 0.875em 1em;
-  color: var(--text-primary);
+  padding: 0.875em 1em !important;
+  color: var(--text-primary) !important;
+  background: var(--bg-primary) !important;
+}
+
+td code {
+  background: var(--code-bg) !important;
+  color: var(--code-text) !important;
+  border-color: var(--border-color) !important;
 }
 
 // ============================================================================
@@ -309,6 +316,11 @@ blockquote p {
   left: auto !important;
   overflow: visible !important;
   padding: 1rem !important;
+}
+
+// Hide menu icon on desktop (laptop screens)
+.site-header .site-button.site-nav-toggle {
+  display: none !important;
 }
 
 .site-header {
@@ -412,7 +424,7 @@ blockquote p {
 }
 
 .aux-nav {
-  display: flex !important;
+  display: none !important;
   gap: 0.5rem !important;
   flex-wrap: wrap !important;
 }
@@ -479,6 +491,9 @@ blockquote p {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  bottom: auto !important;
+  top: 1rem !important;
+  right: 1rem !important;
 }
 
 .theme-toggle:hover {
@@ -631,6 +646,16 @@ blockquote p {
     font-size: 1.375rem;
   }
   
+  // Show aux-nav buttons on tablet and up
+  .aux-nav {
+    display: flex !important;
+  }
+  
+  // Hide menu icon on tablet and up
+  .site-header .site-button.site-nav-toggle {
+    display: none !important;
+  }
+  
   .side-bar {
     width: var(--sidebar-width) !important;
     background: var(--bg-secondary) !important;
@@ -717,5 +742,14 @@ blockquote p {
 @media (min-width: 1024px) {
   .main-content {
     max-width: 900px !important;
+  }
+  
+  // Position theme toggle in header on large screens
+  .theme-toggle {
+    position: static !important;
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    margin-left: auto !important;
+    box-shadow: none !important;
   }
 }
