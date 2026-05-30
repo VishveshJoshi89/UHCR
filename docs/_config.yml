@@ -1,0 +1,25 @@
+title: UHCR Documentation
+description: Universal Hardware-Aware Compute Runtime — Documentation
+remote_theme: just-the-docs/just-the-docs
+
+baseurl: /UHCR
+url: https://vishveshjoshi89.github.io
+
+markdown: kramdown
+highlighter: rouge
+color_scheme: light
+
+nav_enabled: true
+
+aux_links:
+  "UHCR on GitHub":
+    - "https://github.com/VishveshJoshi89/UHCR"
+
+footer_content: 'Licensed under <a href="https://github.com/VishveshJoshi89/UHCR">Apache-2.0 License</a>.'
+
+plugins:
+  - jekyll-remote-theme
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
