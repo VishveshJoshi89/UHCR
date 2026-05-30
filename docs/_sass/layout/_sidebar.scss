@@ -23,7 +23,15 @@
   color: var(--color-primary) !important;
   font-weight: 700 !important;
   font-size: 1.25rem !important;
-  &:hover { color: var(--color-primary-dark) !important; }
+  text-decoration: none !important;
+  background-image: none !important;
+  background-color: transparent !important;
+  &:hover {
+    color: var(--color-primary-dark) !important;
+    background-color: transparent !important;
+    text-decoration: none !important;
+    background-image: none !important;
+  }
 }
 .site-header {
   background: var(--sidebar-bg) !important;

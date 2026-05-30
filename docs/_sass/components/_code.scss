@@ -5,12 +5,16 @@ code {
   font-variant-ligatures: none;
 }
 :not(pre) > code {
-  background: var(--bg-tertiary);
-  color: var(--color-primary);
-  padding: 0.2em 0.4em;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
-  font-weight: 500;
+  background: var(--bg-tertiary) !important;
+  color: var(--color-primary) !important;
+  padding: 0.2em 0.4em !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid var(--border-color) !important;
+  font-weight: 500 !important;
+  
+  [data-theme="dark"] & {
+    color: var(--color-primary-light) !important;
+  }
 }
 .highlight, pre {
   background: var(--bg-secondary) !important;
@@ -31,35 +35,53 @@ code {
     color: var(--text-primary) !important;
   }
 }
-.copy-button {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  font-size: 0.8em;
-  font-weight: 500;
-  cursor: pointer;
-  transition: opacity var(--transition), background var(--transition), border var(--transition);
-  z-index: 10;
-  opacity: 0;
-  &:hover {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    border-color: var(--text-muted);
+.copy-button,
+.highlight button[aria-label="Copy code to clipboard"],
+.highlight button[aria-label="Copied!"],
+pre button[aria-label="Copy code to clipboard"],
+pre button[aria-label="Copied!"] {
+  position: absolute !important;
+  top: 0.75rem !important;
+  right: 0.75rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  padding: 0 !important;
+  background: var(--bg-tertiary) !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-sm) !important;
+  cursor: pointer !important;
+  transition: opacity var(--transition), background var(--transition), border var(--transition) !important;
+  z-index: 10 !important;
+  opacity: 0 !important;
+  box-shadow: var(--shadow-sm) !important;
+  
+  svg {
+    width: 1rem !important;
+    height: 1rem !important;
+    fill: currentColor !important;
   }
-  &.copied {
-    background: var(--color-success);
-    color: white;
-    border-color: transparent;
+  
+  &:hover {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--text-muted) !important;
+  }
+  &.copied, &[aria-label="Copied!"] {
+    background: var(--color-success) !important;
+    color: white !important;
+    border-color: transparent !important;
   }
 }
-.highlight:hover .copy-button, pre:hover .copy-button {
-  opacity: 1;
+
+.highlight:hover .copy-button,
+.highlight:hover button[aria-label="Copy code to clipboard"],
+.highlight:hover button[aria-label="Copied!"],
+pre:hover .copy-button,
+pre:hover button[aria-label="Copy code to clipboard"],
+pre:hover button[aria-label="Copied!"] {
+  opacity: 1 !important;
 }

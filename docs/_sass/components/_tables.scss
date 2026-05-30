@@ -18,16 +18,24 @@ table {
     }
   }
   tbody {
-    background: var(--bg-secondary);
+    background: var(--bg-secondary) !important;
     tr {
-      border-bottom: 1px solid var(--border-color);
-      transition: background var(--transition);
-      &:hover { background: var(--bg-tertiary); }
-      &:last-child { border-bottom: none; }
+      border-bottom: 1px solid var(--border-color) !important;
+      transition: background var(--transition) !important;
+      &:hover { background: var(--bg-tertiary) !important; }
+      &:last-child { border-bottom: none !important; }
     }
     td {
-      padding: 0.875em 1em;
-      color: var(--text-primary);
+      padding: 0.875em 1em !important;
+      color: var(--text-primary) !important;
+      
+      code {
+        background: var(--bg-tertiary) !important;
+        border-color: var(--border-color) !important;
+        [data-theme="dark"] & {
+          color: var(--color-primary-light) !important;
+        }
+      }
     }
   }
 }

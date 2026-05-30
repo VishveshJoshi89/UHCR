@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize all features
   initThemeToggle();
   initDynamicYear();
-  initCopyButtons();
   initSmoothScroll();
   initScrollProgress();
   initExternalLinks();
@@ -83,69 +82,6 @@ function initDynamicYear() {
   if (yearElement) {
     yearElement.textContent = new Date().getFullYear();
   }
-}
-
-// ============================================================================
-// COPY BUTTONS - Add to code blocks
-// ============================================================================
-function initCopyButtons() {
-  const codeBlocks = document.querySelectorAll('div.highlight, pre');
-  
-  codeBlocks.forEach(function(block) {
-    // Skip if already has a copy button
-    if (block.querySelector('.copy-button')) return;
-    
-    // Create copy button
-    const button = document.createElement('button');
-    button.className = 'copy-button';
-    button.innerHTML = `
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5.5 2.5h7v9h-7v-9z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-        <path d="M3.5 4.5v9h7" stroke="currentColor" stroke-width="1.5" fill="none"/>
-      </svg>
-      <span>Copy</span>
-    `;
-    button.setAttribute('aria-label', 'Copy code to clipboard');
-    
-    // Position button
-    block.style.position = 'relative';
-    block.appendChild(button);
-    
-    // Add click handler
-    button.addEventListener('click', function(e) {
-      e.preventDefault();
-      
-      // Get code text
-      const code = block.querySelector('code') || block;
-      const text = code.textContent;
-      
-      // Copy to clipboard
-      navigator.clipboard.writeText(text).then(function() {
-        // Success feedback
-        button.innerHTML = `
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="2" fill="none"/>
-          </svg>
-          <span>Copied!</span>
-        `;
-        button.classList.add('copied');
-        
-        // Reset after 2 seconds
-        setTimeout(function() {
-          button.innerHTML = `
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M5.5 2.5h7v9h-7v-9z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-              <path d="M3.5 4.5v9h7" stroke="currentColor" stroke-width="1.5" fill="none"/>
-            </svg>
-            <span>Copy</span>
-          `;
-          button.classList.remove('copied');
-        }, 2000);
-      }).catch(function(err) {
-        console.error('Failed to copy:', err);
-      });
-    });
-  });
 }
 
 // ============================================================================
