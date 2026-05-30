@@ -323,6 +323,11 @@ blockquote p {
   display: none !important;
 }
 
+// Also hide menu button
+#menu-button {
+  display: flex !important;
+}
+
 .site-header {
   background: var(--bg-secondary) !important;
   border-bottom: 1px solid var(--border-color) !important;
@@ -335,6 +340,12 @@ blockquote p {
   color: var(--color-primary) !important;
   font-weight: 700 !important;
   font-size: 1.125rem !important;
+  transition: none !important;
+  
+  &:hover {
+    color: var(--color-primary) !important;
+    text-decoration: none !important;
+  }
 }
 
 .site-nav {
@@ -421,6 +432,10 @@ blockquote p {
   outline: none !important;
   border-color: var(--color-primary) !important;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+}
+
+.search-icon {
+  display: none !important;
 }
 
 .aux-nav {
@@ -651,8 +666,12 @@ blockquote p {
     display: flex !important;
   }
   
-  // Hide menu icon on tablet and up
+  // Hide menu icon and menu button on tablet and up
   .site-header .site-button.site-nav-toggle {
+    display: none !important;
+  }
+  
+  #menu-button {
     display: none !important;
   }
   

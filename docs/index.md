@@ -73,4 +73,4 @@ print(result)  # 42
 
 ## License
 
-UHCR is licensed under the [Apache-2.0 License](https://github.com/VishveshJoshi89/UHCR/blob/main/LICENSE.txt).
+UHCR is licensed under the [Apache-2.0 License](https://github.com/VishveshJoshi89/UHCR/blob/uhcr-v1/LICENSE.txt).
