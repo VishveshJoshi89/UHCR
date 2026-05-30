@@ -6,6 +6,18 @@
 <!-- Custom CSS -->
 <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
 
+<!-- Theme Toggle Button -->
+<button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+
 <!-- Custom JavaScript -->
 <script src="{{ '/assets/js/custom.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/js/animations.js' | relative_url }}" defer></script>
+<script>
+  // Initialize theme on page load
+  (function() {
+    const theme = localStorage.getItem('theme') || 'light';
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>

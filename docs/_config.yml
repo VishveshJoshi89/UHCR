@@ -52,7 +52,7 @@ aux_links:
 aux_links_new_tab: true
 
 # Footer
-footer_content: 'Copyright &copy; 2024 Vishvesh Joshi. Licensed under the <a href="https://github.com/VishveshJoshi89/UHCR/blob/main/LICENSE.txt">Apache-2.0 License</a>.'
+footer_content: 'Copyright &copy; <span id="year">2024</span> Vishvesh Joshi. Licensed under the <a href="https://github.com/VishveshJoshi89/UHCR/blob/main/LICENSE.txt" target="_blank" rel="noopener noreferrer">Apache-2.0 License</a>.'
 
 # Back to top link
 back_to_top: true
