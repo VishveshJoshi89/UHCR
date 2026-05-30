@@ -50,6 +50,11 @@ Generated\ Files/
 TestResult.xml
 nunit-*.xml
 
+# Virtual environments
+venv/
+.venv/
+env/
+
 # Build Results of an ATL Project
 [Dd]ebugPS/
 [Rr]eleasePS/
@@ -266,6 +271,15 @@ ServiceFabricBackup/
 *.ldf
 *.ndf
 
+# OS
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+.pytest_cache/
+htmlcov/
+.coverage
+
 # Business Intelligence projects
 *.rdl.data
 *.bim.layout
@@ -361,3 +375,13 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
