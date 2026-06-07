@@ -406,6 +406,132 @@ Backend:            AVX2         Generic      -
 
 ---
 
+### `uhcr mcp`
+
+Start the UHCR Model Context Protocol (MCP) server for AI agent integration. Enables AI assistants to query documentation, search code examples, and get API references.
+
+**Usage:**
+```bash
+uhcr mcp [OPTIONS]
+```
+
+**Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `--docs-path PATH` | str | ./docs | Documentation directory path |
+| `--host HOST` | str | localhost | MCP server bind address |
+| `--port PORT` | int | 3000 | MCP server port |
+| `--log-level LEVEL` | str | INFO | Logging level (DEBUG, INFO, WARN, ERROR) |
+| `--cache` | flag | False | Enable documentation caching |
+| `--stdio` | flag | False | Use stdio transport (for direct AI integration) |
+
+**Examples:**
+
+Start MCP server:
+```bash
+uhcr mcp --docs-path docs/
+```
+
+Start with caching enabled:
+```bash
+uhcr mcp --docs-path docs/ --cache --log-level DEBUG
+```
+
+Start in stdio mode (for Claude Desktop/Kiro):
+```bash
+uhcr mcp --stdio
+```
+
+**Available MCP Tools:**
+
+The MCP server exposes these tools to AI agents:
+
+1. **`search_docs`** - Search documentation by keywords
+   ```json
+   {
+     "query": "jit compilation",
+     "category": "guides",
+     "max_results": 5
+   }
+   ```
+
+2. **`get_code_examples`** - Extract code examples
+   ```json
+   {
+     "topic": "tensor operations",
+     "language": "python"
+   }
+   ```
+
+3. **`get_api_reference`** - Get API documentation
+   ```json
+   {
+     "api_name": "uhcr.tensor"
+   }
+   ```
+
+4. **`get_navigation_structure`** - Get docs hierarchy
+   ```json
+   {}
+   ```
+
+5. **`get_quick_reference`** - Get cheat sheets
+   ```json
+   {
+     "category": "jit"
+   }
+   ```
+
+**AI Assistant Configuration:**
+
+For Claude Desktop, add to `claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "uhcr-docs": {
+      "command": "uhcr",
+      "args": ["mcp", "--stdio", "--docs-path", "/path/to/UHCR/docs"],
+      "env": {}
+    }
+  }
+}
+```
+
+For Kiro, add to `.kiro/settings/mcp.json`:
+```json
+{
+  "mcpServers": {
+    "uhcr-docs": {
+      "command": "uhcr",
+      "args": ["mcp", "--stdio"],
+      "autoApprove": ["search_docs", "get_code_examples"],
+      "disabled": false
+    }
+  }
+}
+```
+
+**Testing MCP Server:**
+
+```bash
+# Start server
+uhcr mcp --docs-path docs/ --log-level DEBUG
+
+# In another terminal, test with curl (if using HTTP mode)
+curl http://localhost:3000/tools/search_docs \
+  -d '{"query": "tensor", "max_results": 3}'
+```
+
+**Use Cases:**
+- Enable AI assistants to search UHCR documentation
+- Provide code examples to AI coding assistants
+- Allow AI agents to understand UHCR API
+- Support AI-powered documentation navigation
+- Enable conversational documentation queries
+
+---
+
 ## Configuration File
 
 UHCR can be configured via TOML file at `~/.uhcr/config.toml`.
@@ -528,6 +654,28 @@ uhcr serve --workers 2
 uhcr monitor --interval 1
 ```
 
+### AI Assistant Integration
+
+```bash
+# Start MCP server for AI agents
+uhcr mcp --docs-path docs/ --cache
+
+# Or use stdio mode for direct integration
+uhcr mcp --stdio --docs-path docs/
+```
+
+**Claude Desktop Integration:**
+```json
+{
+  "mcpServers": {
+    "uhcr-docs": {
+      "command": "uhcr",
+      "args": ["mcp", "--stdio", "--docs-path", "/path/to/UHCR/docs"]
+    }
+  }
+}
+```
+
 ### Production Deployment
 
 ```bash
@@ -628,6 +776,7 @@ uhcr monitor
 - [Benchmarks](benchmarks) - Performance metrics
 - [Network Subsystem](network) - Distributed execution
 - [Containerization](containerization) - Docker/K8s deployment
+- [AI Agent Integration](ai-integration) - MCP server details
 
 ---
 
