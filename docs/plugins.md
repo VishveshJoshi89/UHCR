@@ -66,18 +66,69 @@ from uhcr.plugins import PluginManager
 manager = PluginManager()
 
 # Load all discovered plugins
-await manager.load_all()
+loaded_count = manager.load_all()
+print(f"Loaded {loaded_count} plugins")
 
-# Activate specific plugins
-manager.activate('custom-cuda-backend')
-manager.activate('advanced-optimizer')
-
-# Query active plugins
-active_backends = manager.get_active('backend')
-active_optimizers = manager.get_active('optimizer')
-
-print(f"Active backends: {[p.name for p in active_backends]}")
+# Query loaded plugins
+print("Loaded plugin names:", list(manager.loaded_plugins))
 ```
+
+---
+
+## Execution Modes
+
+### Normal execution (built-in runtime)
+
+UHCR runs normally with its built-in backend support without requiring any custom plugins.
+
+```python
+import uhcr
+
+@uhcr.jit(eager=True)
+def compute(a, b):
+    return (a + b) * 2
+
+print(compute(10, 20))
+```
+
+No plugin manager invocation is required for normal execution. Built-in backend plugins such as `cpu-generic`, `cpu-avx2`, `cpu-avx512`, and `cuda-ptx` are available automatically when supported by the host.
+
+### With plugins
+
+Load custom plugins explicitly when you want additional backends, kernels, or optimization passes.
+
+```python
+from pathlib import Path
+from uhcr.plugins import PluginManager
+
+manager = PluginManager()
+loaded = manager.load_all([Path('plugins')])
+print(f'Loaded {loaded} plugins')
+print('Loaded plugin names:', list(manager.loaded_plugins))
+```
+
+To load a single plugin directory:
+
+```python
+plugin_dir = Path('plugins/example_plugin')
+manager.load_single(plugin_dir)
+```
+
+### Without plugins
+
+If you want to run UHCR without custom plugins, simply do not call the plugin loader.
+
+```python
+import uhcr
+
+@uhcr.jit(eager=True)
+def compute(a, b):
+    return a * b
+
+print(compute(3, 5))
+```
+
+This ensures UHCR runs on the default built-in backends only. To be explicit, avoid `PluginManager.load_all()` and unset `UHCR_PLUGIN_PATH` if it is defined.
 
 ---
 

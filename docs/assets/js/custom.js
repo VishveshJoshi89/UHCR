@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initScrollProgress();
   initExternalLinks();
   initTableResponsive();
+  initPWA();
   
   // Mark body as loaded for CSS transitions
   document.body.classList.add('loaded');
@@ -39,15 +40,12 @@ function initThemeToggle() {
     document.body.appendChild(toggle);
   }
   
-  // Get saved theme or system preference
   const savedTheme = localStorage.getItem('theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
   
-  // Apply theme
   applyTheme(currentTheme);
   
-  // Toggle on click
   toggle.addEventListener('click', function() {
     const theme = document.documentElement.getAttribute('data-theme');
     const newTheme = theme === 'dark' ? 'light' : 'dark';
@@ -55,7 +53,6 @@ function initThemeToggle() {
     localStorage.setItem('theme', newTheme);
   });
   
-  // Listen for system theme changes
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
     if (!localStorage.getItem('theme')) {
       applyTheme(e.matches ? 'dark' : 'light');
@@ -72,6 +69,22 @@ function applyTheme(theme) {
     document.documentElement.removeAttribute('data-theme');
     if (toggle) toggle.textContent = '🌙';
   }
+}
+
+// ============================================================================
+// PWA - Register Service Worker
+// ============================================================================
+function initPWA() {
+  if (!('serviceWorker' in navigator)) return;
+  if (!window.__UHCR_SW_PATH) return;
+
+  navigator.serviceWorker.register(window.__UHCR_SW_PATH)
+    .then(function(registration) {
+      console.log('UHCR PWA: Service worker registered at', registration.scope);
+    })
+    .catch(function(error) {
+      console.warn('UHCR PWA: Service worker registration failed', error);
+    });
 }
 
 // ============================================================================
@@ -98,14 +111,10 @@ function initSmoothScroll() {
       const target = document.querySelector(href);
       if (target) {
         e.preventDefault();
-        
-        // Smooth scroll to target
         target.scrollIntoView({
           behavior: 'smooth',
           block: 'start'
         });
-        
-        // Update URL without jumping
         history.pushState(null, null, href);
       }
     });
@@ -116,14 +125,11 @@ function initSmoothScroll() {
 // SCROLL PROGRESS - Subtle indicator
 // ============================================================================
 function initScrollProgress() {
-  // Create progress bar
   const progressBar = document.createElement('div');
   progressBar.className = 'scroll-progress';
   document.body.appendChild(progressBar);
   
-  // Update on scroll
   let ticking = false;
-  
   window.addEventListener('scroll', function() {
     if (!ticking) {
       window.requestAnimationFrame(function() {
@@ -133,14 +139,12 @@ function initScrollProgress() {
       ticking = true;
     }
   });
-  
-  // Initial update
   updateScrollProgress(progressBar);
 }
 
 function updateScrollProgress(progressBar) {
   const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-  const scrolled = (window.scrollY / windowHeight) * 100;
+  const scrolled = windowHeight > 0 ? (window.scrollY / windowHeight) * 100 : 0;
   progressBar.style.width = Math.min(scrolled, 100) + '%';
 }
 
@@ -151,7 +155,6 @@ function initExternalLinks() {
   const links = document.querySelectorAll('a[href^="http"]');
   
   links.forEach(function(link) {
-    // Check if it's an external link
     if (!link.hostname.includes(window.location.hostname)) {
       link.classList.add('external-link');
       link.setAttribute('target', '_blank');
@@ -167,14 +170,9 @@ function initTableResponsive() {
   const tables = document.querySelectorAll('.main-content table');
   
   tables.forEach(function(table) {
-    // Skip if already wrapped
     if (table.parentElement.classList.contains('table-wrapper')) return;
-    
-    // Create wrapper
     const wrapper = document.createElement('div');
     wrapper.className = 'table-wrapper';
-    
-    // Wrap table
     table.parentNode.insertBefore(wrapper, table);
     wrapper.appendChild(table);
   });
@@ -184,7 +182,6 @@ function initTableResponsive() {
 // KEYBOARD SHORTCUTS
 // ============================================================================
 document.addEventListener('keydown', function(e) {
-  // Ctrl/Cmd + K to focus search
   if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
     e.preventDefault();
     const searchInput = document.querySelector('.search-input, #search-input');

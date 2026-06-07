@@ -8,9 +8,7 @@ url: https://vishveshjoshi89.github.io
 
 markdown: kramdown
 highlighter: rouge
-
-# Color scheme
-color_scheme: dark
+color_scheme: light
 
 # Callouts
 callouts:
@@ -26,7 +24,48 @@ callouts:
 
 # Navigation
 nav_enabled: true
-nav_sort: case_insensitive
+nav_sort: false
+nav:
+  - title: Home
+    url: /
+  - title: Guides
+    items:
+      - title: Quick Start
+        url: /quickstart/
+      - title: JIT Guide
+        url: /jit-guide/
+      - title: Plugin Guide
+        url: /plugin-guide/
+      - title: How UHCR Works
+        url: /how-uhcr-works/
+      - title: Contributing
+        url: /contributing/
+  - title: Reference
+    items:
+      - title: Architecture
+        url: /architecture/
+      - title: Hardware Detection
+        url: /hardware-reference/
+      - title: Optimization Passes
+        url: /optimization-passes/
+      - title: Storage
+        url: /storage/
+      - title: Network
+        url: /network/
+      - title: Runtime
+        url: /runtime/
+      - title: Containerization
+        url: /containerization/
+      - title: API Reference
+        url: /api-reference/
+      - title: Benchmarks
+        url: /benchmarks/
+      - title: Plugin System
+        url: /plugins/
+      - title: Multi-ISA
+        url: /multi-isa/
+  - title: Features
+    url: /features/
 
 # Search
 search_enabled: true
@@ -37,7 +76,7 @@ search:
   preview_words_after: 10
   tokenizer_separator: /[\s/]+/
   rel_url: true
-  button: false
+  button: true
 
 # Heading anchors
 heading_anchors: true
@@ -52,34 +91,11 @@ aux_links:
 aux_links_new_tab: true
 
 # Footer
-footer_content: 'Copyright &copy; <span id="year">2024</span> Vishvesh Joshi. Licensed under the <a href="https://github.com/VishveshJoshi89/UHCR/blob/uhcr-v1/LICENSE.txt" target="_blank" rel="noopener noreferrer">Apache-2.0 License</a>.'
+footer_content: 'Copyright &copy; <span id="year">2026</span> Vishvesh Joshi. Licensed under the <a href="https://github.com/VishveshJoshi89/UHCR/blob/uhcr-v1/LICENSE.txt" target="_blank" rel="noopener noreferrer">Apache-2.0 License</a>.'
 
 # Back to top link
 back_to_top: true
 back_to_top_text: "Back to top"
-
-# Collections for organizing content
-collections:
-  guides:
-    permalink: "/:collection/:path/"
-    output: true
-  reference:
-    permalink: "/:collection/:path/"
-    output: true
-
-just_the_docs:
-  collections:
-    guides:
-      name: Guides
-      nav_fold: false
-    reference:
-      name: Reference
-      nav_fold: false
-
-# Plugins
-plugins:
-  - jekyll-remote-theme
-  - jekyll-seo-tag
 
 # Exclude from processing
 exclude:
@@ -87,14 +103,13 @@ exclude:
   - vendor/
   - Gemfile
   - Gemfile.lock
+  - README.md
 
 # SCSS compilation
 sass:
   style: compressed
-  
-# Load custom CSS after theme
+
+# Theme plugins
 plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag
-
-# Custom CSS will be loaded via assets/css/just-the-docs-default.scss
