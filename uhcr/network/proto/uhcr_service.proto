@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package uhcr;
+
+option python_package = "uhcr.network.proto";
+
+// Job submission and status service
+service UHCRService {
+    rpc SubmitJob(JobRequest) returns (JobResponse);
+    rpc GetJobStatus(JobStatusRequest) returns (JobStatusResponse);
+    rpc StreamResults(JobStatusRequest) returns (stream ResultChunk);
+}
+
+message JobRequest {
+    bytes payload = 1;          // Serialized IR or script bytes
+    float timeout_seconds = 2;  // Job timeout (default: 300)
+    string worker_hint = 3;     // Optional: preferred worker architecture
+}
+
+message JobResponse {
+    string job_id = 1;
+    string status = 2;          // "queued"
+    string error = 3;           // Set if submission failed
+}
+
+message JobStatusRequest {
+    string job_id = 1;
+}
+
+message JobStatusResponse {
+    string job_id = 1;
+    string status = 2;          // queued | running | completed | failed | timeout
+    string submitted_at = 3;    // ISO 8601 timestamp
+    string completed_at = 4;    // ISO 8601 timestamp (if terminal)
+    bytes result = 5;           // Result bytes (if completed)
+    string error = 6;           // Error message (if failed)
+}
+
+message ResultChunk {
+    string job_id = 1;
+    bytes data = 2;             // Chunk of result data (64KB default)
+    int32 chunk_index = 3;
+    bool is_last = 4;
+}

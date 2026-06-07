@@ -20,24 +20,31 @@ pip install -e ".[dev]"
 python -m pytest tests/ -v
 ```
 
-Or the quick validation:
-```bash
-python test_all.py
-```
-
 ## Project Structure
 
 ```
 uhcr/
-├── api/            # User-facing Tensor and ops
-├── backends/       # Execution backends (CUDA, AVX2, generic)
-├── compiler/       # IR, IR builder, code generation
-│   ├── frontend/   # Language parser (WIP)
-│   └── x86_64/    # x86-64 assembler and codegen
-├── hardware/       # Hardware detection (CPUID, GPU, memory)
-├── plugins/        # Plugin system
-├── runtime/        # Runtime orchestrator, memory, scheduler
-└── security/       # Module signing, sandboxing (WIP)
+├── api/              # User-facing Tensor and ops
+├── backends/         # Execution backends (CUDA, AVX2, generic)
+├── benchmarks/       # Performance benchmarks
+├── compiler/         # IR, IR builder, code generation
+│   ├── frontend/     # Language parser (WIP)
+│   ├── x86_64/       # x86-64 assembler and codegen
+│   ├── aarch64/      # ARM64 assembler and codegen
+│   ├── riscv/        # RISC-V assembler and codegen
+│   ├── passes/       # Compiler optimization passes
+│   ├── ir.py         # IR definitions
+│   ├── ir_builder.py # IR builder utilities
+│   └── __init__.py   # Compiler package init
+├── contanerization/  # Dockerfiles and scripts for building and testing in containers
+├── frontend/         # Python bindings and user interface
+├── hardware/         # Hardware detection (CPUID, GPU, memory)
+├── network/          # Distributed execution and communication
+├── plugins/          # Plugin system
+├── runtime/          # Runtime orchestrator, memory, scheduler
+├── security/         # Module signing, sandboxing (WIP)
+├── storage/          # Persistent storage and caching
+└── __init__.py       # Package initializer
 ```
 
 ## Adding a New Backend

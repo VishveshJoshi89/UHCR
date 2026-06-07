@@ -1,0 +1,8 @@
+[plugin]
+name = "example-plugin"
+version = "1.0.0"
+author = "UHCR Contributors"
+description = "Example plugin demonstrating the UHCR plugin system"
+entry_point = "example_plugin.main"
+dependencies = []
+min_uhcr_version = "0.0.0"

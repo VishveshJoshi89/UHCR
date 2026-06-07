@@ -14,48 +14,48 @@ UHCR is a layered execution stack that compiles a custom intermediate representa
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    @uhcr.jit Decorator                   │
-│         Trace Python → Build IR → Compile → Cache      │
+│                    @uhcr.jit Decorator                  │
+│         Trace Python → Build IR → Compile → Cache       │
 ├─────────────────────────────────────────────────────────┤
-│                    Application Code                      │
+│                    Application Code                     │
 │              uhcr.tensor(), a.matmul(b)                 │
 ├─────────────────────────────────────────────────────────┤
 │                      API Layer                          │
-│           uhcr/api/tensor.py, uhcr/api/ops.py          │
-│  - Tensor creation and shape management                │
-│  - Operation dispatch (matmul, vadd)                   │
+│           uhcr/api/tensor.py, uhcr/api/ops.py           │
+│  - Tensor creation and shape management                 │
+│  - Operation dispatch (matmul, vadd)                    │
 ├─────────────────────────────────────────────────────────┤
 │                 IR Optimization Pipeline                │
-│  Constant Fold → Strength Reduce → DCE → CSE          │
+│  Constant Fold → Strength Reduce → DCE → CSE            │
 ├─────────────────────────────────────────────────────────┤
 │                   Compiler Pipeline                     │
-│        uhcr/compiler/ir.py, ir_builder.py              │
-│  - IR types: I32, I64, F32, F64, V4F32, V8F32, PTR   │
-│  - Opcodes: scalar math, vector SIMD, memory, control │
-│  - High-level intrinsics: MATMUL, RELU                │
+│        uhcr/compiler/ir.py, ir_builder.py               │
+│  - IR types: I32, I64, F32, F64, V4F32, V8F32, PTR      │
+│  - Opcodes: scalar math, vector SIMD, memory, control   │
+│  - High-level intrinsics: MATMUL, RELU                  │
 ├─────────────────────────────────────────────────────────┤
 │                  Code Generation                        │
-│  uhcr/compiler/x86_64/ — native x86-64 (AVX2)        │
+│  uhcr/compiler/x86_64/ — native x86-64 (AVX2)           │
 ├─────────────────────────────────────────────────────────┤
 │                  Backend Selection                      │
 │              uhcr/backends/                             │
-│  - Backend ABC: name, priority, supports(), compile()  │
-│  - Smart routing: GPU ops → CUDA, scalar → CPU        │
-│  - Backends: CUDA(15) > AVX512(10) > AVX2(5) > Gen(1)│
+│  - Backend ABC: name, priority, supports(), compile()   │
+│  - Smart routing: GPU ops → CUDA, scalar → CPU          │
+│  - Backends: CUDA(15) > AVX512(10) > AVX2(5) > Gen(1)   │
 ├─────────────────────────────────────────────────────────┤
 │                Hardware Detection                       │
 │              uhcr/hardware/                             │
-│  - cpuid.py: JIT CPUID execution for feature flags     │
-│  - gpu_detect.py: CUDA/Vulkan/ROCm/Metal probing      │
-│  - memory_detect.py: RAM, NUMA, page size              │
-│  - platform_info.py: aggregated HardwareProfile        │
+│  - cpuid.py: JIT CPUID execution for feature flags      │
+│  - gpu_detect.py: CUDA/Vulkan/ROCm/Metal probing        │
+│  - memory_detect.py: RAM, NUMA, page size               │
+│  - platform_info.py: aggregated HardwareProfile         │
 ├─────────────────────────────────────────────────────────┤
 │                   Plugin System                         │
 │              uhcr/plugins/                              │
-│  - Plugin ABC: initialize(), shutdown()                │
-│  - PluginManager: discover, load, unload               │
-│  - TOML manifest: plugin.toml                          │
-│  - Registries: kernels, backends, passes               │
+│  - Plugin ABC: initialize(), shutdown()                 │
+│  - PluginManager: discover, load, unload                │
+│  - TOML manifest: plugin.toml                           │
+│  - Registries: kernels, backends, passes                │
 └─────────────────────────────────────────────────────────┘
 ```
 
