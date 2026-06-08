@@ -7,14 +7,11 @@ on:
 
 permissions:
   contents: read
-
   pages: write
-
   id-token: write
 
 concurrency:
   group: pages
-
   cancel-in-progress: true
 
 jobs:
@@ -30,17 +27,18 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-
+          node-version: 22
           cache: npm
-
           cache-dependency-path: web/package-lock.json
 
-      - run: npm ci
+      - name: Install
+        run: npm ci
 
-      - run: npm run build
+      - name: Build
+        run: npm run build
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: web/dist
 
@@ -51,10 +49,8 @@ jobs:
 
     environment:
       name: github-pages
-
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - id: deployment
-
         uses: actions/deploy-pages@v4
