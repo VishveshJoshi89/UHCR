@@ -1,72 +1,79 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-export function useMarkdown(filePath: string) {
-  const [content, setContent] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface UseMarkdownResult {
+  content: string;
+  loading: boolean;
+  error: string | null;
+}
+
+export function useMarkdown(filePath: string | undefined): UseMarkdownResult {
+  const [content, setContent] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(Boolean(filePath));
+  const [error, setError] = useState<string | null>(
+    filePath ? null : "No file path provided",
+  );
 
   useEffect(() => {
+    if (!filePath) {
+      return;
+    }
 
-    let cancelled = false;
+    const controller = new AbortController();
+    let active = true;
 
     async function loadMarkdown() {
-
-      if (!filePath) {
-        if (!cancelled) {
-          setError('No file path provided');
-          setLoading(false);
-        }
-        return;
-      }
+      setLoading(true);
+      setError(null);
+      setContent("");
 
       try {
+        if (!filePath) {
+          return;
+        }
 
-        setLoading(true);
-        setError(null);
-
-        const response = await fetch(filePath);
+        const response = await fetch(filePath, {
+          signal: controller.signal,
+        });
 
         if (!response.ok) {
-          throw new Error('Failed to load markdown');
+          throw new Error(`Failed to load ${filePath}: ${response.statusText}`);
         }
 
         const text = await response.text();
 
-        if (!cancelled) {
+        if (active) {
           setContent(text);
         }
-
       } catch (err) {
-
-        if (!cancelled) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : 'Unknown error'
-          );
+        if (!active || controller.signal.aborted) {
+          return;
         }
 
+        setError(
+          err instanceof Error ? err.message : "Failed to load markdown",
+        );
       } finally {
-
-        if (!cancelled) {
+        if (active && !controller.signal.aborted) {
           setLoading(false);
         }
-
       }
-
     }
 
-    loadMarkdown();
+    void loadMarkdown();
 
     return () => {
-      cancelled = true;
+      active = false;
+      controller.abort();
     };
-
   }, [filePath]);
 
-  return {
-    content,
-    loading,
-    error
-  };
+  if (!filePath) {
+    return {
+      content: "",
+      loading: false,
+      error: "No file path provided",
+    };
+  }
+
+  return { content, loading, error };
 }
