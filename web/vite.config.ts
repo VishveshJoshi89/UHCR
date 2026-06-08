@@ -1,11 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
 export default defineConfig({
 
- base:"/UHCR/",
+  base:'/UHCR/',
 
- plugins:[react()]
+  plugins:[
+    react()
+  ]
 
 })
