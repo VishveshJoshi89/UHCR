@@ -11,40 +11,49 @@ permissions:
   id-token: write
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: web/package-lock.json
 
-      - name: Install
+      - name: Install Dependencies
         working-directory: ./web
         run: npm ci
 
-      - name: Build
+      - name: Build Website
         working-directory: ./web
         run: npm run build
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: web/dist
+          path: ./web/dist
 
   deploy:
+
     needs: build
+
     runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
 
     permissions:
       pages: write
       id-token: write
 
-    environment:
-      name: github-pages
-
     steps:
-      - uses: actions/deploy-pages@v4
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

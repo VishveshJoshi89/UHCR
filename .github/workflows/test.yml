@@ -13,7 +13,7 @@ jobs:
 
     steps:
 
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Node
@@ -23,20 +23,14 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
 
-      - name: Verify Files
-        run: |
-          pwd
-          ls
-          ls web
-
       - name: Install Dependencies
         working-directory: ./web
         run: npm ci
 
-      - name: Build
+      - name: Build Project
         working-directory: ./web
         run: npm run build
 
-      - name: Lint
+      - name: Run Linter
         working-directory: ./web
         run: npm run lint

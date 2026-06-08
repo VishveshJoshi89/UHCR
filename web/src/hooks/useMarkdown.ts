@@ -1,57 +1,72 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-interface UseMarkdownResult {
-  content: string;
-  loading: boolean;
-  error: string | null;
-}
-
-export function useMarkdown(filePath: string | undefined): UseMarkdownResult {
-  const [content, setContent] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
+export function useMarkdown(filePath: string) {
+  const [content, setContent] = useState('');
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!filePath) {
-      setContent('');
-      setLoading(false);
-      setError('No file path provided');
-      return;
-    }
 
-    let isMounted = true;
+    let cancelled = false;
 
     async function loadMarkdown() {
-      setLoading(true);
-      setError(null);
+
+      if (!filePath) {
+        if (!cancelled) {
+          setError('No file path provided');
+          setLoading(false);
+        }
+        return;
+      }
 
       try {
-        const response = await fetch(filePath!);
-        
+
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(filePath);
+
         if (!response.ok) {
-          throw new Error(`Failed to load ${filePath}: ${response.statusText}`);
+          throw new Error('Failed to load markdown');
         }
 
         const text = await response.text();
-        
-        if (isMounted) {
+
+        if (!cancelled) {
           setContent(text);
-          setLoading(false);
         }
+
       } catch (err) {
-        if (isMounted) {
-          setError(err instanceof Error ? err.message : 'Failed to load markdown');
+
+        if (!cancelled) {
+          setError(
+            err instanceof Error
+              ? err.message
+              : 'Unknown error'
+          );
+        }
+
+      } finally {
+
+        if (!cancelled) {
           setLoading(false);
         }
+
       }
+
     }
 
     loadMarkdown();
 
     return () => {
-      isMounted = false;
+      cancelled = true;
     };
+
   }, [filePath]);
 
-  return { content, loading, error };
+  return {
+    content,
+    loading,
+    error
+  };
 }
