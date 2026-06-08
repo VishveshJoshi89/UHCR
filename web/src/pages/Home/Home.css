@@ -1,0 +1,5 @@
+.home-page {
+  min-height: calc(100dvh - var(--header-height));
+  padding-top: clamp(1rem, 3vw, 2rem);
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+}

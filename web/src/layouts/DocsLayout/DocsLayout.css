@@ -1,0 +1,19 @@
+.docs-layout {
+  display: flex;
+  min-height: calc(100dvh - var(--header-height));
+  width: 100%;
+}
+
+.docs-main {
+  flex: 1;
+  min-width: 0;
+  margin-left: var(--sidebar-width);
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+@media (max-width: 768px) {
+  .docs-main {
+    margin-left: 0;
+    padding: 1rem;
+  }
+}

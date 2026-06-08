@@ -1,0 +1,232 @@
+.plugin-builder-page {
+  min-height: calc(100dvh - var(--header-height));
+  padding: clamp(1rem, 3vw, 2rem);
+  background:
+    radial-gradient(circle at top, var(--accent-light), transparent 28%),
+    linear-gradient(180deg, var(--bg-secondary), var(--bg-primary));
+}
+
+.plugin-builder-container {
+  max-width: var(--container-width);
+  margin-inline: auto;
+}
+
+.builder-header {
+  text-align: center;
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
+}
+
+.builder-header h1 {
+  margin-bottom: 0.75rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.builder-header p {
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  color: var(--text-secondary);
+  max-width: 70ch;
+  margin-inline: auto;
+}
+
+.builder-content {
+  display: grid;
+  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2rem);
+  align-items: start;
+}
+
+.builder-form,
+.builder-output {
+  background: var(--surface-strong);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-section h2 {
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 1.2rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: border-color 160ms var(--ease-standard),
+    box-shadow 160ms var(--ease-standard),
+    background-color 160ms var(--ease-standard);
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-group input:hover,
+.form-group textarea:hover {
+  border-color: var(--border-strong);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+  background: var(--bg-primary);
+}
+
+.dependency-input {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.dependency-input input {
+  flex: 1;
+  min-width: 0;
+}
+
+.dependency-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dependency-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.6rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.85rem;
+}
+
+.dependency-item span {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  word-break: break-word;
+}
+
+.remove-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--text-tertiary);
+  font-size: 1.2rem;
+  transition: color 160ms var(--ease-standard),
+    background-color 160ms var(--ease-standard),
+    border-color 160ms var(--ease-standard);
+}
+
+.remove-btn:hover {
+  color: var(--error);
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+  border-color: color-mix(in srgb, var(--error) 25%, transparent);
+}
+
+.no-dependencies {
+  padding: 1rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  border: 1px dashed var(--border-color);
+  border-radius: 0.85rem;
+  background: var(--bg-secondary);
+}
+
+.output-section {
+  margin-bottom: 2rem;
+}
+
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.output-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.installation-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.installation-section h2 {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.installation-steps {
+  padding-left: 1.25rem;
+}
+
+.installation-steps li {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+@media (max-width: 1024px) {
+  .builder-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .plugin-builder-page {
+    padding: 1rem;
+  }
+
+  .dependency-input {
+    flex-direction: column;
+  }
+
+  .output-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .builder-form,
+  .builder-output {
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+  }
+}
