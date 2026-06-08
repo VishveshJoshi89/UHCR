@@ -214,6 +214,24 @@ L_exit:
 """
 
     def compile(self, func: Function) -> Callable:
+        # Safety check before CUDA compilation
+        try:
+            from uhcr.native import get_safety_monitor, SafetyStatus
+            monitor = get_safety_monitor()
+            if monitor and monitor.is_enabled():
+                # Check GPU temperature
+                gpu_status = monitor.check_gpu_temperature()
+                if gpu_status != SafetyStatus.OK:
+                    raise RuntimeError(
+                        f"GPU temperature too high for compilation: {monitor.get_last_error()}"
+                    )
+                
+                # Check for emergency stop
+                if monitor.is_emergency_stopped():
+                    raise RuntimeError("Emergency stop active - cannot compile CUDA kernel")
+        except ImportError:
+            pass
+        
         # Initialize CUDA context
         if not self._init_cuda():
             raise RuntimeError("CUDA driver initialization failed")
@@ -238,93 +256,121 @@ L_exit:
 
         # Construct runner function wrapper
         def cuda_runner(*args):
-            from uhcr.api.tensor import Tensor
-            dev_ptrs = []
-            param_values = []
-            
-            for i, (arg, arg_def) in enumerate(zip(args, func.arguments)):
-                if arg_def.type == Type.PTR:
-                    # Allocate GPU memory
-                    dev_ptr = ctypes.c_void_p(0)
+            # Safety check before kernel launch
+            try:
+                from uhcr.native import get_safety_monitor, SafetyStatus
+                monitor = get_safety_monitor()
+                if monitor and monitor.is_enabled():
+                    # Check GPU temperature before launch
+                    gpu_status = monitor.check_gpu_temperature()
+                    if gpu_status != SafetyStatus.OK:
+                        raise RuntimeError(
+                            f"GPU temperature too high for kernel launch: {monitor.get_last_error()}"
+                        )
                     
-                    if isinstance(arg, Tensor):
-                        # Host Tensor
-                        ctypes_type = ctypes.c_float if arg.dtype == Type.F32 else ctypes.c_double
-                        host_arr = arg.buffer.as_ctypes_array(ctypes_type)
-                        size_bytes = arg.buffer.size
+                    # Start operation timer
+                    monitor.start_operation(60000)  # 1 minute timeout for GPU operations
+            except ImportError:
+                pass
+            
+            try:
+                from uhcr.api.tensor import Tensor
+                dev_ptrs = []
+                param_values = []
+            
+                for i, (arg, arg_def) in enumerate(zip(args, func.arguments)):
+                    if arg_def.type == Type.PTR:
+                        # Allocate GPU memory
+                        dev_ptr = ctypes.c_void_p(0)
                         
-                        res = self._lib.cuMemAlloc(ctypes.byref(dev_ptr), size_bytes)
-                        if res != 0:
-                            raise RuntimeError(f"cuMemAlloc failed: {res}")
+                        if isinstance(arg, Tensor):
+                            # Host Tensor
+                            ctypes_type = ctypes.c_float if arg.dtype == Type.F32 else ctypes.c_double
+                            host_arr = arg.buffer.as_ctypes_array(ctypes_type)
+                            size_bytes = arg.buffer.size
                             
-                        # If it is not the output tensor, copy host to device
-                        is_output = (i == 2) # Index 2 is the output C or z tensor
-                        if not is_output:
-                            res = self._lib.cuMemcpyHtoD(dev_ptr, ctypes.byref(host_arr), size_bytes)
+                            res = self._lib.cuMemAlloc(ctypes.byref(dev_ptr), size_bytes)
+                            if res != 0:
+                                raise RuntimeError(f"cuMemAlloc failed: {res}")
+                                
+                            # If it is not the output tensor, copy host to device
+                            is_output = (i == 2) # Index 2 is the output C or z tensor
+                            if not is_output:
+                                res = self._lib.cuMemcpyHtoD(dev_ptr, ctypes.byref(host_arr), size_bytes)
+                                if res != 0:
+                                    raise RuntimeError(f"cuMemcpyHtoD failed: {res}")
+                                    
+                            dev_ptrs.append((dev_ptr, host_arr, size_bytes, is_output))
+                            param_values.append(ctypes.c_uint64(dev_ptr.value))
+                        elif isinstance(arg, int) and arg > 1000000:
+                            # Raw GPU address passed directly
+                            param_values.append(ctypes.c_uint64(arg))
+                        else:
+                            # Host ctypes array or buffer
+                            size_bytes = ctypes.sizeof(arg) if hasattr(arg, '_length_') else 4096
+                            res = self._lib.cuMemAlloc(ctypes.byref(dev_ptr), size_bytes)
+                            if res != 0:
+                                raise RuntimeError(f"cuMemAlloc failed: {res}")
+                                
+                            res = self._lib.cuMemcpyHtoD(dev_ptr, ctypes.byref(arg), size_bytes)
                             if res != 0:
                                 raise RuntimeError(f"cuMemcpyHtoD failed: {res}")
                                 
-                        dev_ptrs.append((dev_ptr, host_arr, size_bytes, is_output))
-                        param_values.append(ctypes.c_uint64(dev_ptr.value))
-                    elif isinstance(arg, int) and arg > 1000000:
-                        # Raw GPU address passed directly
-                        param_values.append(ctypes.c_uint64(arg))
+                            dev_ptrs.append((dev_ptr, arg, size_bytes, True))
+                            param_values.append(ctypes.c_uint64(dev_ptr.value))
                     else:
-                        # Host ctypes array or buffer
-                        size_bytes = ctypes.sizeof(arg) if hasattr(arg, '_length_') else 4096
-                        res = self._lib.cuMemAlloc(ctypes.byref(dev_ptr), size_bytes)
-                        if res != 0:
-                            raise RuntimeError(f"cuMemAlloc failed: {res}")
-                            
-                        res = self._lib.cuMemcpyHtoD(dev_ptr, ctypes.byref(arg), size_bytes)
-                        if res != 0:
-                            raise RuntimeError(f"cuMemcpyHtoD failed: {res}")
-                            
-                        dev_ptrs.append((dev_ptr, arg, size_bytes, True))
-                        param_values.append(ctypes.c_uint64(dev_ptr.value))
+                        # Scalar integer or float
+                        if arg_def.type == Type.I32:
+                            param_values.append(ctypes.c_uint32(arg))
+                        elif arg_def.type == Type.F32:
+                            param_values.append(ctypes.c_float(arg))
+
+                # Build kernel parameter pointers
+                param_ptrs = [ctypes.addressof(p) for p in param_values]
+                # Convert list of addresses to ctypes array of void*
+                void_ptr_arr = (ctypes.c_void_p * len(param_ptrs))(*param_ptrs)
+
+                # Launch kernel:
+                # cuLaunchKernel(function, gridX, gridY, gridZ, blockX, blockY, blockZ, sharedMem, stream, kernelParams, extra)
+                # Use 1D grid for vadd, 2D grid for matmul
+                if b"matmul_kernel" in kernel_name:
+                    M, N, K = args[3], args[4], args[5]
+                    # Block size: 16x16
+                    block_x, block_y = 16, 16
+                    grid_x = (M + block_x - 1) // block_x
+                    grid_y = (N + block_y - 1) // block_y
+                    res = self._lib.cuLaunchKernel(kernel_fn, grid_x, grid_y, 1, block_x, block_y, 1, 0, None, void_ptr_arr, None)
                 else:
-                    # Scalar integer or float
-                    if arg_def.type == Type.I32:
-                        param_values.append(ctypes.c_uint32(arg))
-                    elif arg_def.type == Type.F32:
-                        param_values.append(ctypes.c_float(arg))
+                    n = args[3]
+                    # Block size: 256
+                    block_x = 256
+                    grid_x = (n + block_x - 1) // block_x
+                    res = self._lib.cuLaunchKernel(kernel_fn, grid_x, 1, 1, block_x, 1, 1, 0, None, void_ptr_arr, None)
+                    
+                if res != 0:
+                    raise RuntimeError(f"cuLaunchKernel failed: {res}")
 
-            # Build kernel parameter pointers
-            param_ptrs = [ctypes.addressof(p) for p in param_values]
-            # Convert list of addresses to ctypes array of void*
-            void_ptr_arr = (ctypes.c_void_p * len(param_ptrs))(*param_ptrs)
+                # Synchronize context
+                self._lib.cuCtxSynchronize()
 
-            # Launch kernel:
-            # cuLaunchKernel(function, gridX, gridY, gridZ, blockX, blockY, blockZ, sharedMem, stream, kernelParams, extra)
-            # Use 1D grid for vadd, 2D grid for matmul
-            if b"matmul_kernel" in kernel_name:
-                M, N, K = args[3], args[4], args[5]
-                # Block size: 16x16
-                block_x, block_y = 16, 16
-                grid_x = (M + block_x - 1) // block_x
-                grid_y = (N + block_y - 1) // block_y
-                res = self._lib.cuLaunchKernel(kernel_fn, grid_x, grid_y, 1, block_x, block_y, 1, 0, None, void_ptr_arr, None)
-            else:
-                n = args[3]
-                # Block size: 256
-                block_x = 256
-                grid_x = (n + block_x - 1) // block_x
-                res = self._lib.cuLaunchKernel(kernel_fn, grid_x, 1, 1, block_x, 1, 1, 0, None, void_ptr_arr, None)
-                
-            if res != 0:
-                raise RuntimeError(f"cuLaunchKernel failed: {res}")
-
-            # Synchronize context
-            self._lib.cuCtxSynchronize()
-
-            # Copy device back to host for any host-allocated outputs
-            for dev_ptr, host_var, size, is_output in dev_ptrs:
-                if is_output:
-                    res = self._lib.cuMemcpyDtoH(ctypes.byref(host_var), dev_ptr, size)
-                    if res != 0:
-                        raise RuntimeError(f"cuMemcpyDtoH failed: {res}")
-                # Free device memory
-                self._lib.cuMemFree(dev_ptr)
+                # Copy device back to host for any host-allocated outputs
+                for dev_ptr, host_var, size, is_output in dev_ptrs:
+                    if is_output:
+                        res = self._lib.cuMemcpyDtoH(ctypes.byref(host_var), dev_ptr, size)
+                        if res != 0:
+                            raise RuntimeError(f"cuMemcpyDtoH failed: {res}")
+                    # Free device memory
+                    self._lib.cuMemFree(dev_ptr)
+            
+            finally:
+                # End operation timer
+                try:
+                    from uhcr.native import get_safety_monitor
+                    monitor = get_safety_monitor()
+                    if monitor and monitor.is_enabled():
+                        monitor.end_operation()
+                except ImportError:
+                    pass
 
         return cuda_runner
 

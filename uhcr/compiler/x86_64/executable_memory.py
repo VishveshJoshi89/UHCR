@@ -8,9 +8,29 @@ class ExecutableMemory:
         self.size = size
         self.address = None
         self.system = platform.system()
+        self._safety_validated = False
         self._allocate()
 
     def _allocate(self):
+        # Safety check before allocation
+        try:
+            from uhcr.native import get_safety_monitor, SafetyStatus
+            monitor = get_safety_monitor()
+            if monitor and monitor.is_enabled():
+                # Check if emergency stop is active
+                if monitor.is_emergency_stopped():
+                    raise RuntimeError("Emergency stop active - cannot allocate executable memory")
+                
+                # Validate memory allocation request
+                status = monitor.validate_memory(0, self.size, False)
+                if status != SafetyStatus.OK:
+                    raise RuntimeError(f"Memory safety check failed: {monitor.get_last_error()}")
+                
+                self._safety_validated = True
+        except ImportError:
+            # Safety monitor not available - continue without protection
+            pass
+        
         if self.system == "Windows":
             # Win32 VirtualAlloc
             MEM_COMMIT = 0x1000
@@ -54,6 +74,20 @@ class ExecutableMemory:
     def write(self, data: bytes):
         """Writes machine code bytes into the allocated executable memory buffer."""
         assert len(data) <= self.size, f"Data size {len(data)} exceeds allocated size {self.size}"
+        
+        # Safety check before writing
+        if self._safety_validated:
+            try:
+                from uhcr.native import get_safety_monitor, SafetyStatus
+                monitor = get_safety_monitor()
+                if monitor and monitor.is_enabled():
+                    # Validate write operation
+                    status = monitor.validate_memory(self.address, len(data), True)
+                    if status != SafetyStatus.OK:
+                        raise RuntimeError(f"Memory write safety check failed: {monitor.get_last_error()}")
+            except ImportError:
+                pass
+        
         ctypes.memmove(self.address, data, len(data))
 
     def get_function(self, ctypes_proto):

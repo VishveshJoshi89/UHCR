@@ -7,6 +7,19 @@ class IRBuilder:
         self.module: Optional[Module] = None
         self.function: Optional[Function] = None
         self.current_block: Optional[BasicBlock] = None
+        
+        # Initialize safety monitor for instruction emission
+        self._safety_monitor = None
+        self._init_safety()
+    
+    def _init_safety(self):
+        """Initialize the hardware safety monitor."""
+        try:
+            from uhcr.native import get_safety_monitor
+            self._safety_monitor = get_safety_monitor()
+        except Exception:
+            # Safety monitor not available, continue without protection
+            pass
 
     def new_module(self) -> Module:
         self.module = Module()
@@ -23,6 +36,37 @@ class IRBuilder:
 
     def _emit(self, opcode: Opcode, type_: Type, args: List[Value]) -> Instruction:
         assert self.current_block is not None, "Cannot emit instruction: no current basic block set"
+        
+        # Safety checks before emitting potentially dangerous instructions
+        if self._safety_monitor and self._safety_monitor.is_enabled():
+            # Check for emergency stop on all operations
+            if self._safety_monitor.is_emergency_stopped():
+                raise RuntimeError(
+                    "Emergency stop is active. Cannot emit IR instructions. "
+                    "System must cool down before resuming operations."
+                )
+            
+            # Check CPU temperature for vector and memory-intensive operations
+            if opcode in (Opcode.VADD, Opcode.VSUB, Opcode.VMUL, Opcode.VDIV, Opcode.VFMADD,
+                          Opcode.VLOAD, Opcode.VSTORE, Opcode.MATMUL, Opcode.RELU):
+                cpu_status = self._safety_monitor.check_cpu_temperature()
+                if cpu_status != 0:  # Not OK
+                    cpu_temp = self._safety_monitor.get_cpu_temperature()
+                    raise RuntimeError(
+                        f"CPU temperature too high ({cpu_temp}°C) for vector operation {opcode.value}. "
+                        f"Operation aborted to prevent hardware damage."
+                    )
+            
+            # Check GPU temperature for GPU-suitable operations
+            if opcode in (Opcode.MATMUL, Opcode.VADD, Opcode.VSUB, Opcode.VMUL, Opcode.VDIV):
+                gpu_status = self._safety_monitor.check_gpu_temperature()
+                if gpu_status != 0 and gpu_status != 2:  # Not OK and not NOT_AVAILABLE
+                    gpu_temp = self._safety_monitor.get_gpu_temperature()
+                    raise RuntimeError(
+                        f"GPU temperature too high ({gpu_temp}°C) for operation {opcode.value}. "
+                        f"Operation aborted to prevent hardware damage."
+                    )
+        
         inst = Instruction(opcode, type_, args)
         self.current_block.add_instruction(inst)
         return inst

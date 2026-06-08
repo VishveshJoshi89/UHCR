@@ -240,6 +240,26 @@ class MemoryPool:
         """
         if size <= 0:
             raise ValueError(f"Allocation size must be positive, got {size}")
+        
+        # Safety check before allocation
+        try:
+            from uhcr.native import get_safety_monitor, SafetyStatus
+            monitor = get_safety_monitor()
+            if monitor and monitor.is_enabled():
+                # Check memory limits
+                current_usage = monitor.get_memory_usage()
+                if current_usage + size > 16 * 1024 * 1024 * 1024:  # 16GB limit
+                    raise MemoryError(
+                        f"Memory allocation would exceed safety limit. "
+                        f"Current: {current_usage/1024**3:.2f}GB, Requested: {size/1024**3:.2f}GB"
+                    )
+                
+                # Validate allocation
+                status = monitor.validate_memory(0, size, False)
+                if status != SafetyStatus.OK:
+                    raise MemoryError(f"Memory safety check failed: {monitor.get_last_error()}")
+        except ImportError:
+            pass
 
         size_class = self._find_size_class(size)
 

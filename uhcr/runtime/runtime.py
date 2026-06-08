@@ -12,13 +12,65 @@ class UHCRRuntime:
         self._cache: Dict[str, Callable] = {}
         self._cache_lock = threading.Lock()
         self.optimize = True  # Enable IR optimization by default
+        
+        # Initialize native safety monitor
+        self._safety_monitor = None
+        self._init_safety()
 
+    def _init_safety(self):
+        """Initialize the hardware safety monitor."""
+        try:
+            from uhcr.native import get_safety_monitor
+            self._safety_monitor = get_safety_monitor()
+            self._safety_monitor.enable()
+            
+            # Set conservative default limits
+            self._safety_monitor.set_max_cpu_temp(85)  # 85°C
+            self._safety_monitor.set_max_gpu_temp(80)  # 80°C
+            self._safety_monitor.set_max_memory(16 * 1024 * 1024 * 1024)  # 16GB
+        except Exception as e:
+            import warnings
+            warnings.warn(
+                f"Failed to initialize hardware safety monitor: {e}. "
+                "Running without hardware protection.",
+                RuntimeWarning
+            )
+    
     def get_profile(self) -> HardwareProfile:
         """Returns the detected hardware profile of the host system."""
         return self.profile
 
     def compile(self, func: Function) -> Callable:
         """Compiles the function using the best available backend and caches the result."""
+        # Check safety monitor before compilation
+        if self._safety_monitor and self._safety_monitor.is_enabled():
+            # Check CPU temperature
+            cpu_status = self._safety_monitor.check_cpu_temperature()
+            if cpu_status != 0:  # SafetyStatus.OK = 0
+                cpu_temp = self._safety_monitor.get_cpu_temperature()
+                raise RuntimeError(
+                    f"CPU temperature too high ({cpu_temp}°C). "
+                    f"Compilation aborted to prevent hardware damage. "
+                    f"Error: {self._safety_monitor.get_last_error()}"
+                )
+            
+            # Check GPU temperature
+            gpu_status = self._safety_monitor.check_gpu_temperature()
+            if gpu_status != 0:
+                gpu_temp = self._safety_monitor.get_gpu_temperature()
+                raise RuntimeError(
+                    f"GPU temperature too high ({gpu_temp}°C). "
+                    f"Compilation aborted to prevent hardware damage. "
+                    f"Error: {self._safety_monitor.get_last_error()}"
+                )
+            
+            # Check for emergency stop
+            if self._safety_monitor.is_emergency_stopped():
+                raise RuntimeError(
+                    "Emergency stop is active. Hardware protection triggered. "
+                    "System must cool down before resuming operations."
+                )
+        
         # Build a cache key that includes function structure, not just signature
         ir_hash = self._hash_function(func)
         cache_key = f"{func.name}-{func.return_type.value}-[" + ",".join([arg.type.value for arg in func.arguments]) + f"]-{ir_hash}"

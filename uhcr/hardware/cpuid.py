@@ -57,6 +57,24 @@ MAP_ANONYMOUS = 0x20
 
 def _allocate_executable_memory(size: int) -> Tuple[int, Any]:
     """Allocates executable memory and returns (address, handle/free_func)."""
+    # Safety check before CPUID execution
+    try:
+        from uhcr.native import get_safety_monitor, SafetyStatus
+        monitor = get_safety_monitor()
+        if monitor and monitor.is_enabled():
+            # Check CPU temperature before executing privileged code
+            cpu_status = monitor.check_cpu_temperature()
+            if cpu_status != SafetyStatus.OK:
+                raise RuntimeError(
+                    f"CPU temperature too high for CPUID execution: {monitor.get_last_error()}"
+                )
+            
+            # Check for emergency stop
+            if monitor.is_emergency_stopped():
+                raise RuntimeError("Emergency stop active - cannot execute CPUID")
+    except ImportError:
+        pass
+    
     os_name = platform.system()
     if os_name == "Windows":
         kernel32 = ctypes.windll.kernel32

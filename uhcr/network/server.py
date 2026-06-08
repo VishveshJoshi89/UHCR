@@ -182,6 +182,28 @@ class ProtocolServer:
         if self._running:
             logger.warning("Server is already running")
             return
+        
+        # Safety check before server start
+        try:
+            from uhcr.native import get_safety_monitor, SafetyStatus
+            monitor = get_safety_monitor()
+            if monitor and monitor.is_enabled():
+                # Check system health before starting server
+                cpu_status = monitor.check_cpu_temperature()
+                if cpu_status != SafetyStatus.OK:
+                    raise RuntimeError(
+                        f"Cannot start server: CPU temperature too high ({monitor.get_cpu_temperature()}°C)"
+                    )
+                
+                # Check for emergency stop
+                if monitor.is_emergency_stopped():
+                    raise RuntimeError("Emergency stop active - cannot start server")
+                
+                logger.info("Safety monitor active: CPU %d°C, Memory %.2fGB",
+                           monitor.get_cpu_temperature(),
+                           monitor.get_memory_usage() / 1024**3)
+        except ImportError:
+            logger.warning("Safety monitor not available - running without hardware protection")
 
         self._shutdown_event = asyncio.Event()
 

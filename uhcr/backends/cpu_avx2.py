@@ -22,6 +22,24 @@ class CPUAVX2Backend(Backend):
         return profile.cpu.has_avx2
 
     def compile(self, func: Function) -> Callable:
+        # Safety check before AVX2 compilation
+        try:
+            from uhcr.native import get_safety_monitor, SafetyStatus
+            monitor = get_safety_monitor()
+            if monitor and monitor.is_enabled():
+                # Check CPU temperature
+                cpu_status = monitor.check_cpu_temperature()
+                if cpu_status != SafetyStatus.OK:
+                    raise RuntimeError(
+                        f"CPU temperature too high for AVX2 compilation: {monitor.get_last_error()}"
+                    )
+                
+                # Check for emergency stop
+                if monitor.is_emergency_stopped():
+                    raise RuntimeError("Emergency stop active - cannot compile AVX2 code")
+        except ImportError:
+            pass
+        
         # AVX2 backend compiles to native machine code using X86_64CodeGenerator
         codegen = X86_64CodeGenerator(func)
         code_bytes = codegen.compile()

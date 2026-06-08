@@ -59,6 +59,18 @@ class OptimizationPipeline:
             The optimized function.
         """
         self._stats.clear()
+        
+        # Safety check before optimization
+        try:
+            from uhcr.native import get_safety_monitor, SafetyStatus
+            monitor = get_safety_monitor()
+            if monitor and monitor.is_enabled():
+                # Start operation with timeout
+                status = monitor.start_operation(30000)  # 30 second timeout for optimization
+                if status != SafetyStatus.OK:
+                    raise RuntimeError(f"Cannot start optimization: {monitor.get_last_error()}")
+        except ImportError:
+            pass
 
         for iteration in range(max_iterations):
             changed = False
@@ -81,6 +93,25 @@ class OptimizationPipeline:
             # Fixed-point: stop if no pass changed anything
             if not changed:
                 break
+            
+            # Check for timeout during optimization
+            try:
+                from uhcr.native import get_safety_monitor
+                monitor = get_safety_monitor()
+                if monitor and monitor.is_enabled():
+                    if monitor.check_timeout():
+                        raise RuntimeError("Optimization timeout exceeded")
+            except ImportError:
+                pass
+        
+        # End operation timer
+        try:
+            from uhcr.native import get_safety_monitor
+            monitor = get_safety_monitor()
+            if monitor and monitor.is_enabled():
+                monitor.end_operation()
+        except ImportError:
+            pass
 
         return func
 

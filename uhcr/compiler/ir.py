@@ -236,8 +236,39 @@ class Function:
         self.arguments: List[Argument] = [Argument(t, f"arg{i}") for i, t in enumerate(arg_types)]
         self.blocks: List[BasicBlock] = []
         self._next_inst_id = 0
+        
+        # Initialize safety monitor for complex function operations
+        self._safety_monitor = None
+        self._init_safety()
+    
+    def _init_safety(self):
+        """Initialize the hardware safety monitor."""
+        try:
+            from uhcr.native import get_safety_monitor
+            self._safety_monitor = get_safety_monitor()
+        except Exception:
+            # Safety monitor not available, continue without protection
+            pass
 
     def create_block(self, label: str) -> BasicBlock:
+        # Safety check: prevent creating too many blocks during thermal stress
+        if self._safety_monitor and self._safety_monitor.is_enabled():
+            if self._safety_monitor.is_emergency_stopped():
+                raise RuntimeError(
+                    "Emergency stop is active. Cannot create new basic blocks. "
+                    "System must cool down before resuming operations."
+                )
+            
+            # Warn if creating many blocks (potential complexity issue)
+            if len(self.blocks) > 1000:
+                cpu_status = self._safety_monitor.check_cpu_temperature()
+                if cpu_status != 0:
+                    cpu_temp = self._safety_monitor.get_cpu_temperature()
+                    raise RuntimeError(
+                        f"CPU temperature too high ({cpu_temp}°C) for complex function "
+                        f"with {len(self.blocks)} blocks. Simplify function or wait for cooldown."
+                    )
+        
         block = BasicBlock(label)
         block.parent = self
         self.blocks.append(block)
@@ -249,7 +280,15 @@ class Function:
             self._next_inst_id += 1
 
     def validate(self) -> bool:
-        """Simple validator for IR consistency."""
+        """Simple validator for IR consistency with safety checks."""
+        # Safety check before validation
+        if self._safety_monitor and self._safety_monitor.is_enabled():
+            if self._safety_monitor.is_emergency_stopped():
+                raise RuntimeError(
+                    "Emergency stop is active. Cannot validate function. "
+                    "System must cool down before resuming operations."
+                )
+        
         # Ensure the last block has a terminator (RET or JMP/BR)
         if not self.blocks:
             return False

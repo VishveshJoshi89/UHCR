@@ -12,6 +12,18 @@ class AlignedBuffer:
         self._allocate()
 
     def _allocate(self):
+        # Safety check before allocation
+        try:
+            from uhcr.native import get_safety_monitor, SafetyStatus
+            monitor = get_safety_monitor()
+            if monitor and monitor.is_enabled():
+                # Validate memory allocation
+                status = monitor.validate_memory(0, self.size, False)
+                if status != SafetyStatus.OK:
+                    raise MemoryError(f"Memory safety check failed: {monitor.get_last_error()}")
+        except ImportError:
+            pass
+        
         if self.system == "Windows":
             # Load msvcrt for _aligned_malloc
             try:

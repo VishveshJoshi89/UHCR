@@ -42,26 +42,58 @@ class Scheduler:
         
         callback signature: callback(start_idx, end_idx)
         """
-        if self.num_threads <= 1 or total_iterations <= self.num_threads:
-            # Single-threaded execution shortcut
-            callback(0, total_iterations)
-            return
+        # Safety check before parallel execution
+        try:
+            from uhcr.native import get_safety_monitor, SafetyStatus
+            monitor = get_safety_monitor()
+            if monitor and monitor.is_enabled():
+                # Check CPU temperature before spawning threads
+                cpu_status = monitor.check_cpu_temperature()
+                if cpu_status != SafetyStatus.OK:
+                    raise RuntimeError(
+                        f"CPU temperature too high for parallel execution: {monitor.get_last_error()}"
+                    )
+                
+                # Check for emergency stop
+                if monitor.is_emergency_stopped():
+                    raise RuntimeError("Emergency stop active - cannot spawn worker threads")
+                
+                # Start operation monitoring
+                monitor.start_operation(300000)  # 5 minute timeout
+        except ImportError:
+            pass
+        
+        try:
+            if self.num_threads <= 1 or total_iterations <= self.num_threads:
+                # Single-threaded execution shortcut
+                callback(0, total_iterations)
+                return
 
-        chunk_size = (total_iterations + self.num_threads - 1) // self.num_threads
-        threads = []
+            chunk_size = (total_iterations + self.num_threads - 1) // self.num_threads
+            threads = []
 
-        def worker(thread_id: int, start: int, end: int):
-            self.pin_current_thread(thread_id % (os.cpu_count() or 1))
-            callback(start, end)
+            def worker(thread_id: int, start: int, end: int):
+                self.pin_current_thread(thread_id % (os.cpu_count() or 1))
+                callback(start, end)
 
-        for i in range(self.num_threads):
-            start = i * chunk_size
-            end = min(start + chunk_size, total_iterations)
-            if start >= total_iterations:
-                break
-            t = threading.Thread(target=worker, args=(i, start, end))
-            threads.append(t)
-            t.start()
+            for i in range(self.num_threads):
+                start = i * chunk_size
+                end = min(start + chunk_size, total_iterations)
+                if start >= total_iterations:
+                    break
+                t = threading.Thread(target=worker, args=(i, start, end))
+                threads.append(t)
+                t.start()
 
-        for t in threads:
-            t.join()
+            for t in threads:
+                t.join()
+        
+        finally:
+            # End operation monitoring
+            try:
+                from uhcr.native import get_safety_monitor
+                monitor = get_safety_monitor()
+                if monitor and monitor.is_enabled():
+                    monitor.end_operation()
+            except ImportError:
+                pass
