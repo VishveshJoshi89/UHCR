@@ -11,11 +11,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: web
-
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -26,11 +23,20 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
 
+      - name: Verify Files
+        run: |
+          pwd
+          ls
+          ls web
+
       - name: Install Dependencies
+        working-directory: ./web
         run: npm ci
 
       - name: Build
+        working-directory: ./web
         run: npm run build
 
       - name: Lint
+        working-directory: ./web
         run: npm run lint
