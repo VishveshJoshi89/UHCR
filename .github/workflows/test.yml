@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     branches:
-      - uhcr-v2
+      - uhcr-v1
 
   pull_request:
 

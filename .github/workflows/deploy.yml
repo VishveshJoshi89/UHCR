@@ -3,7 +3,7 @@ name: Deploy Website
 on:
   push:
     branches:
-      - uhcr-v2
+      - uhcr-v1
 
 permissions:
   contents: read
@@ -11,12 +11,10 @@ permissions:
   id-token: write
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
 
     steps:
-
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
