@@ -8,7 +8,7 @@ A Python framework for hardware-optimized computation with JIT compilation acros
 
 
 
-[Full documentation](https://vishveshjoshi89.github.io/UHCR-Docs/)
+[Full documentation](https://vishveshjoshi89.github.io/UHCR-DOCS/)
 
 ## Install
 
