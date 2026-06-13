@@ -5,6 +5,55 @@ from uhcr.compiler.ir_builder import IRBuilder
 from uhcr.runtime.memory_manager import AlignedBuffer
 from uhcr.api.tensor import Tensor
 
+# Operation compilation cache
+_compiled_ops = {}
+
+def compile_vadd(size: int):
+    """Compile vectorized add operation once and cache it."""
+    # Try precompiled versions first
+    try:
+        from uhcr.api.precompiled import get_precompiled_op
+        precompiled = get_precompiled_op(f'vadd_{size}')
+        if precompiled:
+            return precompiled
+    except:
+        pass
+    
+    cache_key = ('vadd', size)
+    
+    if cache_key in _compiled_ops:
+        return _compiled_ops[cache_key]
+    
+    rt = get_runtime()
+    builder = IRBuilder()
+    builder.new_module()
+    
+    # Build vectorized addition: void vadd(float* a, float* b, float* out, int n)
+    func = builder.new_function("vadd", [Type.PTR, Type.PTR, Type.PTR, Type.I32], Type.VOID)
+    entry = func.create_block("entry")
+    builder.set_block(entry)
+    
+    # Unrolled loop for better performance
+    unroll_factor = 8
+    num_iterations = min(size // unroll_factor, 128)  # Limit to prevent huge functions
+    
+    for i in range(num_iterations):
+        base_idx = i * unroll_factor
+        for j in range(unroll_factor):
+            idx = base_idx + j
+            if idx < size:
+                a_val = builder.load(func.arguments[0], idx, Type.F32)
+                b_val = builder.load(func.arguments[1], idx, Type.F32)
+                result = builder.add(a_val, b_val)
+                builder.store(result, func.arguments[2], idx)
+    
+    builder.ret()
+    
+    compiled = rt.compile(func)
+    _compiled_ops[cache_key] = compiled
+    return compiled
+
+
 def dispatch_vadd(x: Tensor, y: Tensor, out: Tensor):
     """Compiles and executes an element-wise vector addition using the best available backend."""
     rt = get_runtime()

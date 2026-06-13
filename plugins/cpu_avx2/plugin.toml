@@ -1,0 +1,8 @@
+[plugin]
+name = "cpu_avx2"
+version = "1.0.0"
+author = "UHCR Contributors"
+description = "AVX2 ISA plugin"
+entry_point = "cpu_avx2.main"
+dependencies = []
+min_uhcr_version = "0.0.0"

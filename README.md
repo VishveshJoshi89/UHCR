@@ -229,7 +229,7 @@ uhcr benchmark --suite tensor --output results.json
 
 ## 📚 Documentation
 
-- [Full Documentation](https://vishveshjoshi89.github.io/UHCR)
+- [Full Documentation](https://vishveshjoshi89.github.io/UHCR-DOCS)
 - [Safety Guide](SAFETY.md)
 - [CLI Reference](docs/cli.md)
 - [API Reference](docs/api-reference.md)

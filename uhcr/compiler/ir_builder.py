@@ -215,8 +215,43 @@ class IRBuilder:
         return self._emit(Opcode.STRHASH, Type.I64, [vs])
 
     # Loop control operations
-    def loop(self, cond: Value, body_block: BasicBlock, exit_block: BasicBlock) -> Instruction:
-        """Create a loop header with condition check.
+    def loop(self, start: Union[Value, int], stop: Union[Value, int], step: Union[Value, int] = 1):
+        """Create a simple for-loop structure.
+        
+        Args:
+            start: Starting value
+            stop: Stop value (exclusive)
+            step: Step value
+            
+        Returns:
+            LoopContext with body, exit blocks and loop variable
+        """
+        from dataclasses import dataclass
+        
+        @dataclass
+        class LoopContext:
+            body: 'BasicBlock'
+            exit: 'BasicBlock'
+            loop_var: 'Value'
+        
+        # Create blocks
+        loop_cond = self.function.create_block("loop_cond")
+        loop_body = self.function.create_block("loop_body")
+        loop_exit = self.function.create_block("loop_exit")
+        
+        # Allocate loop variable (use a simple approach - just return counter value)
+        # For now, return a context that tracks the blocks
+        # The user will set_block to loop_body and add their code
+        
+        # Jump to condition check
+        self.jmp(loop_cond)
+        
+        # Setup condition block (user should fill this in or we provide helpers)
+        context = LoopContext(body=loop_body, exit=loop_exit, loop_var=None)
+        return context
+    
+    def loop_with_cond(self, cond: Value, body_block: 'BasicBlock', exit_block: 'BasicBlock') -> 'Instruction':
+        """Create a loop header with condition check (original function).
         
         Args:
             cond: The loop condition (boolean value)

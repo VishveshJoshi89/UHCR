@@ -1,11 +1,17 @@
 import ctypes
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Dict, Callable
 from uhcr.runtime.memory_manager import AlignedBuffer
 from uhcr import get_runtime
 from uhcr.compiler.ir import Type
 
 class Tensor:
     """N-dimensional hardware-aligned array for high-performance mathematical operations."""
+    
+    # Class-level operation cache for compiled functions
+    _op_cache: Dict[tuple, Callable] = {}
+    _memory_pool: Dict[int, List[AlignedBuffer]] = {}
+    _pool_max_size = 50
+    
     def __init__(self, data: Union[List, float, AlignedBuffer], shape: Tuple[int, ...] = None, dtype=Type.F32):
         self.dtype = dtype
         
@@ -62,6 +68,40 @@ class Tensor:
     def address(self) -> int:
         """Returns the native memory address of the aligned buffer."""
         return self.buffer.address
+    
+    @classmethod
+    def _get_pooled_buffer(cls, size: int) -> AlignedBuffer:
+        """Get buffer from pool or allocate new."""
+        if size in cls._memory_pool and cls._memory_pool[size]:
+            return cls._memory_pool[size].pop()
+        return AlignedBuffer(size, alignment=64)
+    
+    @classmethod
+    def _return_to_pool(cls, buffer: AlignedBuffer):
+        """Return buffer to pool for reuse."""
+        size = len(buffer.data) if hasattr(buffer, 'data') else buffer.size
+        if size not in cls._memory_pool:
+            cls._memory_pool[size] = []
+        if len(cls._memory_pool[size]) < cls._pool_max_size:
+            cls._memory_pool[size].append(buffer)
+    
+    def _operation_signature(self, op: str, other=None) -> tuple:
+        """Create cache key for operation."""
+        if other is None:
+            return (op, self.shape, self.dtype)
+        if isinstance(other, Tensor):
+            return (op, self.shape, self.dtype, other.shape, other.dtype)
+        return (op, self.shape, self.dtype, type(other).__name__)
+    
+    @classmethod
+    def _get_cached_op(cls, sig: tuple) -> Callable:
+        """Get cached compiled operation."""
+        return cls._op_cache.get(sig)
+    
+    @classmethod
+    def _cache_op(cls, sig: tuple, compiled_fn: Callable):
+        """Cache compiled operation."""
+        cls._op_cache[sig] = compiled_fn
 
     def to_numpy(self):
         """Converts the tensor to a NumPy array (if numpy is installed)."""
@@ -83,11 +123,18 @@ class Tensor:
 
     # Tensor math dispatches
     def matmul(self, other: 'Tensor') -> 'Tensor':
-        """Performs hardware-accelerated matrix multiplication."""
+        """Performs hardware-accelerated matrix multiplication with BLAS optimization."""
         assert len(self.shape) == 2 and len(other.shape) == 2, "Matmul requires 2D matrices"
         M, K = self.shape
         K2, N = other.shape
         assert K == K2, f"Matrix size mismatch: {K} != {K2}"
+        
+        # Use optimized BLAS for larger matrices
+        if M >= 32 and N >= 32:
+            try:
+                return self._matmul_blas(other, M, K, N)
+            except:
+                pass  # Fall back to UHCR implementation
         
         # Create output tensor
         out = Tensor([0.0] * (M * N), shape=(M, N), dtype=self.dtype)
@@ -96,15 +143,65 @@ class Tensor:
         from uhcr.api.ops import dispatch_matmul
         dispatch_matmul(self, other, out)
         return out
+    
+    def _matmul_blas(self, other: 'Tensor', M: int, K: int, N: int) -> 'Tensor':
+        """Use system BLAS for matrix multiplication."""
+        try:
+            import numpy as np
+            # Convert to numpy, use its matmul (which uses BLAS), convert back
+            a_np = self.to_numpy()
+            b_np = other.to_numpy()
+            result_np = np.matmul(a_np, b_np)
+            
+            # Convert back to Tensor
+            result = Tensor(result_np.flatten().tolist(), shape=(M, N), dtype=self.dtype)
+            return result
+        except ImportError:
+            raise  # No numpy available, caller will fall back
 
     def __add__(self, other: Union['Tensor', float]) -> 'Tensor':
-        """Performs element-wise tensor addition."""
-        out = Tensor([0.0] * self.size, shape=self.shape, dtype=self.dtype)
-        from uhcr.api.ops import dispatch_vadd
+        """Performs element-wise tensor addition with optimized vectorization."""
         if isinstance(other, Tensor):
             assert self.shape == other.shape, "Shape mismatch for addition"
-            dispatch_vadd(self, other, out)
+            
+            # Try vectorized operation first for better performance
+            try:
+                from uhcr.api.vectorized_ops import get_vectorized_op
+                vec_op = get_vectorized_op('add', self.size)
+                
+                # Use pooled buffer for output
+                element_size = 4 if self.dtype == Type.F32 else 8
+                out_buffer = self._get_pooled_buffer(self.size * element_size)
+                
+                # Execute vectorized operation
+                vec_op(self.address, other.address, out_buffer.address, self.size)
+                
+                out = Tensor(out_buffer, shape=self.shape, dtype=self.dtype)
+                return out
+            except:
+                # Fall back to cached compilation
+                pass
+            
+            # Check cache
+            sig = self._operation_signature('add', other)
+            cached_fn = self._get_cached_op(sig)
+            
+            if cached_fn is None:
+                # Compile and cache
+                from uhcr.api.ops import compile_vadd
+                cached_fn = compile_vadd(self.size)
+                self._cache_op(sig, cached_fn)
+            
+            # Use pooled buffer for output
+            element_size = 4 if self.dtype == Type.F32 else 8
+            out_buffer = self._get_pooled_buffer(self.size * element_size)
+            
+            # Execute cached operation
+            cached_fn(self.address, other.address, out_buffer.address, self.size)
+            
+            out = Tensor(out_buffer, shape=self.shape, dtype=self.dtype)
+            return out
         else:
-            # Scalar add
-            pass
-        return out
+            # Scalar add - TODO
+            out = Tensor([0.0] * self.size, shape=self.shape, dtype=self.dtype)
+            return out

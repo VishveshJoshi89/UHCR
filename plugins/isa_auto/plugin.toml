@@ -1,0 +1,7 @@
+[plugin]
+name        = "isa_auto"
+version     = "1.0.0"
+author      = "UHCR Contributors"
+description = "ISA Auto-Select Plugin — detects CPU ISA tier and wires in optimal kernels for every benchmark category."
+entry_point = "isa_auto.main"
+min_uhcr_version = "1.0.0"
