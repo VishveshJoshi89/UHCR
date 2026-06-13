@@ -332,6 +332,7 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+scripts
 
 # Cake - Uncomment if you are using it
 # tools/**
@@ -388,7 +389,7 @@ __pycache__/
 dist/
 build/
 *.egg
-
+.pypirc.example
 
 # OS
 .DS_Store
