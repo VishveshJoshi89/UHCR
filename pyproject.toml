@@ -89,7 +89,7 @@ uhcr = "uhcr.cli:main"
 [project.urls]
 Homepage = "https://vishveshjoshi89.github.io/UHCR-DOCS"
 Repository = "https://github.com/VishveshJoshi89/UHCR"
-Documentation = "https://vishveshjoshi89.github.io/UHCR-DOCS"
+Documentation = "https://uhcr-docs.vercel.app/"
 "Bug Tracker" = "https://github.com/VishveshJoshi89/UHCR/issues"
 Changelog = "https://github.com/VishveshJoshi89/UHCR/blob/main/CHANGELOG.md"
 "Safety Documentation" = "https://github.com/VishveshJoshi89/UHCR-DOCS/#/blob/main/SAFETY.md"
