@@ -18,7 +18,10 @@ class Tensor:
         if isinstance(data, AlignedBuffer):
             assert shape is not None, "Shape must be provided when wrapping an AlignedBuffer"
             self.buffer = data
-            self.shape = shape
+            self.shape  = shape
+            self.size   = 1
+            for dim in self.shape:
+                self.size *= dim
         else:
             # Recursively analyze nested list to find shape and elements
             if shape is None:
