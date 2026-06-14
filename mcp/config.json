@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "uhcr-docs": {
+      "command": "python",
+      "args": ["mcp/server.py", "--docs-path", "docs"],
+      "env": {
+        "UHCR_MCP_LOG_LEVEL": "INFO"
+      },
+      "description": "UHCR Documentation MCP Server - Provides AI agents with structured access to UHCR documentation, API references, and code examples",
+      "capabilities": {
+        "resources": true,
+        "tools": true,
+        "prompts": false
+      },
+      "metadata": {
+        "version": "1.0.0",
+        "author": "UHCR Team", 
+        "documentation": "https://vishveshjoshi89.github.io/UHCR/",
+        "repository": "https://github.com/VishveshJoshi89/UHCR"
+      }
+    }
+  }
+}
