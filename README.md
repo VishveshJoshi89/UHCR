@@ -257,7 +257,7 @@ pytest tests/
 
 - **PyPI**: https://pypi.org/project/uhcr/
 - **Repository**: https://github.com/VishveshJoshi89/UHCR
-- **Documentation**: https://vishveshjoshi89.github.io/UHCR-DOCS/
+- **Documentation**: https://uhcr-docs.vercel.app/
 - **Bug Tracker**: https://github.com/VishveshJoshi89/UHCR/issues
 - **Changelog**: https://github.com/VishveshJoshi89/UHCR/blob/main/CHANGELOG.md
 
