@@ -5,7 +5,7 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB)](https://www.python.org/)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE.txt)
 [![PyPI version](https://img.shields.io/pypi/v/uhcr)](https://pypi.org/project/uhcr/)
-[![Documentation](https://img.shields.io/badge/docs-Pages-purple)](https://vishveshjoshi89.github.io/UHCR-DOCS/)
+[![Documentation](https://img.shields.io/badge/docs-Pages-purple)](https://uhcr-docs.vercel.app/)
 [![Production Ready](https://img.shields.io/badge/production-ready-success)](SAFETY.md)
 [![Enterprise](https://img.shields.io/badge/enterprise-grade-gold)](SAFETY.md)
 
@@ -13,11 +13,12 @@ UHCR is a production-ready Python framework for hardware-optimized computation w
 
 ## 🚀 Key Features
 
-### 🛡️ **Enterprise Safety** (NEW in v5.0)
+### 🛡️ **Enterprise Safety** (NEW in v5.2)
 - **C++ Safety Checkers** - Native memory bounds, overflow detection, division-by-zero prevention
 - **Runtime Protection** - Stack overflow, heap exhaustion, execution timeout enforcement
 - **17 Violation Types** - Comprehensive dangerous operation detection
 - **Python Fallbacks** - Full safety even without native library
+- **All Over Same** - Same production continues on pypi, testpypi, github, docs
 
 ### ⚡ **Performance**
 - **JIT Compilation** - Traces Python functions and compiles to native machine code
